@@ -117,6 +117,29 @@
   flex: 1;
   overflow-y: auto;
   margin-bottom: 18px;
+  height: 400px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #e3e8ee;
+}
+
+.thread-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.thread-messages::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.thread-messages::-webkit-scrollbar-thumb {
+  background: #1769aa;
+  border-radius: 10px;
+}
+
+.thread-messages::-webkit-scrollbar-thumb:hover {
+  background: #125a8c;
 }
 
 .message-item {
