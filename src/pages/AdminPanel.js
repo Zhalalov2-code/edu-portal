@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/AdminPanel.css';
 
@@ -8,11 +8,6 @@ const SupportTab = ({ messages, selectedUserId, onSelectUser, replyText, onChang
         (m.id_sender === selectedUserId && m.id_getter === 1) || 
         (m.id_sender === 1 && m.id_getter === selectedUserId)
     );
-    const messagesEndRef = useRef(null);
-
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [currentThread]);
 
     return (
         <div className="admin-support-container">
@@ -53,7 +48,6 @@ const SupportTab = ({ messages, selectedUserId, onSelectUser, replyText, onChang
                             ) : (
                                 <p className="empty-state">Нет сообщений в диалоге</p>
                             )}
-                            <div ref={messagesEndRef} />
                         </div>
 
                         <div className="thread-input">
