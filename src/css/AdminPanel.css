@@ -114,18 +114,20 @@
 }
 
 .thread-messages {
-  flex: 1;
+  height: 350px;
   overflow-y: auto;
+  overflow-x: hidden;
   margin-bottom: 18px;
-  height: 300px;
   padding: 12px;
   border-radius: 8px;
   background: #fff;
   border: 1px solid #e3e8ee;
+  display: flex;
+  flex-direction: column;
 }
 
 .thread-messages::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .thread-messages::-webkit-scrollbar-track {
