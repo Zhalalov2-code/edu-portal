@@ -1,0 +1,30 @@
+.td-loading {
+  padding: 2rem;
+}
+
+.td-page {
+  padding: 2rem 0;
+}
+
+.td-options {
+  margin-top: 12px;
+}
+
+.td-option-label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.td-radio {
+  margin-right: 8px;
+}
+
+.td-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.td-result {
+  margin-top: 16px;
+}

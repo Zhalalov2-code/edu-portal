@@ -1,0 +1,197 @@
+/* AdminPanel.css — стили для панели администратора и чата поддержки */
+
+.admin-panel {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.admin-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.admin-header h2 {
+  font-size: 2rem;
+  color: #2d3a4b;
+  margin: 0;
+}
+
+.stats-cards {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: #f7fafd;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  padding: 18px 32px;
+  display: flex;
+  align-items: center;
+  min-width: 180px;
+}
+
+.stat-icon {
+  font-size: 2rem;
+  margin-right: 16px;
+}
+
+.stat-info h3 {
+  font-size: 1.1rem;
+  margin: 0 0 4px 0;
+  color: #3a4a5e;
+}
+
+.stat-value {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #1e7e34;
+}
+
+.admin-content hr {
+  margin: 32px 0 24px 0;
+  border: none;
+  border-top: 1px solid #e3e8ee;
+}
+
+.admin-support-container {
+  display: flex;
+  gap: 32px;
+  margin-top: 16px;
+}
+
+.user-list {
+  min-width: 180px;
+  background: #f3f6fa;
+  border-radius: 8px;
+  padding: 16px 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+
+.user-list h3 {
+  font-size: 1rem;
+  margin-bottom: 12px;
+  color: #2d3a4b;
+}
+
+.user-item {
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 6px;
+  background: #eaf0f7;
+  transition: background 0.2s;
+}
+
+.user-item.active {
+  background: #d1e7ff;
+  font-weight: bold;
+  color: #1769aa;
+}
+
+.empty-state {
+  color: #a0a7b4;
+  font-size: 0.95rem;
+  margin-top: 12px;
+}
+
+.support-thread {
+  flex: 1;
+  background: #f7fafd;
+  border-radius: 8px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.thread-messages {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 18px;
+}
+
+.message-item {
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border-radius: 7px;
+  background: #eaf0f7;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.message-item.from-admin {
+  background: #d1e7ff;
+  color: #1769aa;
+  align-self: flex-end;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.message-text {
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.thread-input {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.reply-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #cfd8e3;
+  font-size: 1rem;
+}
+
+.action-button.primary {
+  background: #1769aa;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.action-button.primary:hover {
+  background: #125a8c;
+}
+
+.zuruck-btn {
+  background: #1769aa;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  margin-right: 16px;
+  margin-bottom: 20px;
+}
+
+.zuruck-btn:hover {
+  background: #125a8c;
+  transform: translateY(-2px);
+}
+
+.zuruck-btn:active {
+  transform: translateY(0);
+}

@@ -1,0 +1,87 @@
+/* Стили для CreateCourseModal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 720px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.modal-close {
+  border: none;
+  background: transparent;
+  font-size: 1.125rem;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 1rem 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
+  resize: vertical;
+}
+
+.form-textarea { min-height: 120px; }
+
+.form-error {
+  color: #b00020;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Basic button styles used in app */
+.btn { padding: 0.55rem 0.9rem; border-radius: 6px; cursor: pointer; }
+.btn-primary { background: #2563eb; color: #fff; border: none; }
+.btn-outline { background: transparent; border: 1px solid #ccc; color: #333; }
+
+@media (max-width: 480px) {
+  .modal-card { max-width: 100%; }
+}

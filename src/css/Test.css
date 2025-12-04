@@ -1,0 +1,62 @@
+.test-page {
+  padding: 2rem 0;
+}
+
+.test-actions {
+  margin-top: 1.5rem;
+}
+
+.test-list-section {
+  margin-top: 2rem;
+}
+
+.test-item {
+  border: 1px solid #dfe3eb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  list-style-type: none;
+}
+
+.test-item-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.test-question {
+  font-weight: 600;
+}
+
+.test-lesson {
+  font-size: 0.95rem;
+  color: #444;
+  margin-top: 6px;
+}
+
+.test-options {
+  margin-top: 8px;
+}
+
+.test-option {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.test-option-wrap {
+  margin-top: 8px;
+}
+
+.test-completed-badge {
+  margin-top: 8px;
+  color: #2f855a;
+  font-weight: 600;
+}
+
+.test-created {
+  font-size: 0.8rem;
+  color: #999;
+  text-align: right;
+}

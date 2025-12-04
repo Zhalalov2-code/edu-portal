@@ -1,0 +1,21 @@
+.app-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.empty-page {
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 48px;
+}
+
+.container-padded {
+  padding: 2rem 0;
+}

@@ -1,0 +1,86 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build output
+build/
+dist/
+
+# dotenv env files
+.env
+.env.*.local
+.env.local
+
+# local env files
+local.env
+
+# Logs
+logs/
+*.log
+
+# macOS
+.DS_Store
+
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Test output
+coverage/
+
+# Misc
+.DS_Store
+Thumbs.db
+
+# Generated lock files (if you want to ignore them uncomment)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Optional: ignore packages installed by the environment
+/.pnp/
+.pnp.js
+
+# NPM pack
+*.tgz
+
+# React Native
+.expo/
+
+# Typescript
+*.tsbuildinfo
+
+# local storybook
+out/
+
+# IDE-specific
+*.iml
+
+# OS generated files
+ehthumbs.db
+Icon
+
+# Yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Parcel cache
+.cache
+
+# Next.js build
+.next
+
+# Svelte
+__sapper__/
+
+# SASS cache
+.sass-cache

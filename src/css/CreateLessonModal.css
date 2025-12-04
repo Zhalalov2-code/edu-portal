@@ -1,0 +1,28 @@
+.clm-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+.clm-card{
+  width:520px;
+  background:#fff;
+  border-radius:8px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  overflow:hidden;
+}
+.clm-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 16px;
+  border-bottom:1px solid #eee;
+}
+.clm-body{ padding:16px; }
+.clm-close{ background:none; border:none; font-size:20px; cursor:pointer }
+.clm-actions{ display:flex; gap:8px; padding:12px 16px; border-top:1px solid #eee; justify-content:flex-end }
+.form-group{ margin-bottom:12px }
+.form-input{ width:100%; padding:8px 10px; border:1px solid #ddd; border-radius:6px }
