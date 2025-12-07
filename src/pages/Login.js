@@ -46,7 +46,6 @@ const Login = () => {
         setErrors({ general: result.message || 'Ошибка входа' });
       }
     } catch (err) {
-      console.error(err);
       setErrors({ general: 'Ошибка сервера' });
     } finally {
       setIsLoading(false);

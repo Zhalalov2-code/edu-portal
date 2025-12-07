@@ -33,7 +33,6 @@ const CourseList = ({ user }) => {
       });
       return collected;
     } catch (err) {
-      console.error('Ошибка загрузки записей на курсы:', err);
       return new Set();
     }
   }, [API_ENROLLMENTS_URL, userId]);
@@ -78,9 +77,7 @@ const CourseList = ({ user }) => {
         }));
         setCourses(withEnroll);
         setFilteredCourses(withEnroll);
-        console.log('Загруженные курсы (нормализованные):', data);
       } catch (error) {
-        console.error('Ошибка загрузки курсов:', error);
       } finally {
         setIsLoading(false);
       }
@@ -130,13 +127,11 @@ const CourseList = ({ user }) => {
       const payload = new URLSearchParams();
       payload.append('user_id', userId);
       payload.append('course_id', String(courseId));
-      console.log('Sending course enrollment payload:', Object.fromEntries(payload));
       await axios.post(API_ENROLLMENTS_URL, payload.toString(), {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         timeout: 15000,
       });
-      console.log('Course enrollment saved for course:', courseId);
-  const enrollmentSet = await fetchEnrollments();
+      const enrollmentSet = await fetchEnrollments();
       setCourses(prev => prev.map(course => 
         course.id === courseId 
           ? { ...course, enrolled: true, students_count: (course.students_count || 0) + 1 }
@@ -148,7 +143,7 @@ const CourseList = ({ user }) => {
           : { ...course, enrolled: enrollmentSet.has(String(course.id)) }
       ));
     } catch (error) {
-      console.error('Ошибка записи на курс:', error);
+      // ignore
     }
   };
 

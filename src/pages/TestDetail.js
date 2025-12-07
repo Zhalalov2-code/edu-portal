@@ -31,7 +31,6 @@ const TestDetail = () => {
             try {
                 const url = `${API_TESTS_URL}/${id}`;
                 const res = await axios.get(url);
-                console.log('TestDetail raw response:', res.data);
                 if (res.status === 200) {
                     let data = res.data?.data ?? res.data ?? null;
 
@@ -41,10 +40,16 @@ const TestDetail = () => {
                             if (found) break;
                             if (Array.isArray(item)) {
                                 for (const sub of item) {
-                                    if (sub && String(sub.id) === String(id)) { found = sub; break; }
+                                    if (sub && String(sub.id) === String(id)) {
+                                        found = sub;
+                                        break;
+                                    }
                                 }
                             } else if (item && typeof item === 'object') {
-                                if (String(item.id) === String(id)) { found = item; break; }
+                                if (String(item.id) === String(id)) {
+                                    found = item;
+                                    break;
+                                }
                             }
                         }
                         if (!found) found = data.find(d => d && typeof d === 'object') || null;
@@ -90,11 +95,9 @@ const TestDetail = () => {
                     } else if (mounted) {
                         setTest(null);
                     }
-                } else {
-                    console.error('Ошибка при загрузке теста', res.status, res.data);
                 }
             } catch (err) {
-                console.error('Ошибка при загрузке теста:', err);
+                setTest(null);
             } finally {
                 if (mounted) setLoading(false);
             }
@@ -102,7 +105,9 @@ const TestDetail = () => {
 
         fetchTest();
 
-        return () => { mounted = false; };
+        return () => {
+            mounted = false;
+        };
     }, [id]);
 
     useEffect(() => {
@@ -131,18 +136,19 @@ const TestDetail = () => {
                 });
                 if (mounted) setCompletedLessons(collected);
             } catch (err) {
-                console.error('Ошибка загрузки прогресса уроков:', err);
                 if (mounted) setCompletedLessons(new Set());
             }
         };
 
         loadProgress();
 
-        return () => { mounted = false; };
+        return () => {
+            mounted = false;
+        };
     }, [userId]);
 
     const canTake = () => {
-        if (user && user.role && user.role.toLowerCase().includes('Teacher')) return true;
+        if (user && user.role && user.role.toLowerCase().includes('teacher')) return true;
         if (test && test.lesson_id) return completedLessons.has(String(test.lesson_id));
         return true;
     };
@@ -183,12 +189,11 @@ const TestDetail = () => {
             arr.add(String(test.id));
             localStorage.setItem(storageKey, JSON.stringify(Array.from(arr)));
         } catch (e) {
-            console.error('Ошибка сохранения completedTests:', e);
+            // ignore
         }
 
         const answerIndex = Number(selected);
         if (Number.isNaN(answerIndex)) {
-            console.error('Некорректный индекс выбранного ответа:', selected);
             alert('Не удалось определить выбранный ответ. Попробуйте ещё раз.');
             return;
         }
@@ -205,66 +210,70 @@ const TestDetail = () => {
             Object.entries(payloadObject).forEach(([key, value]) => {
                 payload.append(key, value);
             });
-            console.log('Sending test result payload:', payloadObject);
 
-            const apiResponse = await axios.post(API_RESULTS_URL, payload.toString(), {
+            await axios.post(API_RESULTS_URL, payload.toString(), {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 timeout: 15000,
             });
-            console.log('Test result API response:', apiResponse?.data);
         } catch (err) {
-            console.error('Ошибка сохранения результата теста:', err);
+            // ignore
         } finally {
             setSubmitting(false);
         }
     };
 
-        if (loading) return <div className="container td-loading">Загрузка теста...</div>;
-        if (!test) return <div className="container td-loading">Тест не найден</div>;
+    if (loading) return <div className="container td-loading">Загрузка теста...</div>;
+    if (!test) return <div className="container td-loading">Тест не найден</div>;
 
-        return (
-            <div className="container td-page">
-                <div className="card">
-                    <div className="card-body">
-                        <h1>Тест: {test.question}</h1>
-                        <div className="td-options">
-                            {test.options && test.options.length > 0 ? (
-                                <div>
-                                    {test.options.map((opt, i) => (
-                                        <label key={i} className="td-option-label">
-                                            <input
-                                                type="radio"
-                                                name="test-option"
-                                                value={i}
-                                                checked={String(selected) === String(i)}
-                                                onChange={() => setSelected(i)}
-                                                disabled={!canTake()}
-                                                className="td-radio"
-                                            />
-                                            <span>{opt}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p>У этого теста нет вариантов ответов.</p>
-                            )}
-                        </div>
-
-                        <div className="td-actions">
-                            <button className="btn btn-primary" onClick={handleSubmit} disabled={!canTake()}>Отправить ответы</button>
-                            <button className="btn btn-outline" onClick={() => navigate(`/lessons/${test.lesson_id}`)} disabled={!test.lesson_id}>Открыть урок</button>
-                            <button className="btn btn-secondary" onClick={() => navigate(-1)}>Назад</button>
-                        </div>
-
-                        {result && (
-                            <div className="td-result">
-                                <strong>Результат:</strong> {result.ok ? 'Пройден' : 'Не пройден'} — {result.score}%
+    return (
+        <div className="container td-page">
+            <div className="card">
+                <div className="card-body">
+                    <h1>Тест: {test.question}</h1>
+                    <div className="td-options">
+                        {test.options && test.options.length > 0 ? (
+                            <div>
+                                {test.options.map((opt, i) => (
+                                    <label key={i} className="td-option-label">
+                                        <input
+                                            type="radio"
+                                            name="test-option"
+                                            value={i}
+                                            checked={String(selected) === String(i)}
+                                            onChange={() => setSelected(i)}
+                                            disabled={!canTake()}
+                                            className="td-radio"
+                                        />
+                                        <span>{opt}</span>
+                                    </label>
+                                ))}
                             </div>
+                        ) : (
+                            <p>У этого теста нет вариантов ответов.</p>
                         )}
                     </div>
+
+                    <div className="td-actions">
+                        <button className="btn btn-primary" onClick={handleSubmit} disabled={!canTake()}>
+                            Отправить ответы
+                        </button>
+                        <button className="btn btn-outline" onClick={() => navigate(`/lessons/${test.lesson_id}`)} disabled={!test.lesson_id}>
+                            Открыть урок
+                        </button>
+                        <button className="btn btn-secondary" onClick={() => navigate(-1)}>
+                            Назад
+                        </button>
+                    </div>
+
+                    {result && (
+                        <div className="td-result">
+                            <strong>Результат:</strong> {result.ok ? 'Пройден' : 'Не пройден'} — {result.score}%
+                        </div>
+                    )}
                 </div>
             </div>
-        );
+        </div>
+    );
 };
 
 export default TestDetail;

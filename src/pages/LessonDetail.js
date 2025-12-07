@@ -20,7 +20,6 @@ const LessonDetail = () => {
       try {
         const url = `https://zhalalov2.su/backend-school/lessons/${id}`;
         const res = await axios.get(url);
-        console.log('LessonDetail raw response:', res.data);
         if (res.status === 200) {
           let data = res.data?.data ?? res.data ?? null;
 
@@ -44,10 +43,8 @@ const LessonDetail = () => {
           }
           setLesson(data);
         } else {
-          console.error('Ошибка загрузки урока', res.status, res.data);
         }
       } catch (err) {
-        console.error('Ошибка загрузки урока:', err);
       } finally {
         setLoading(false);
       }
@@ -79,11 +76,9 @@ const LessonDetail = () => {
         });
         if (mounted) setIsCompleted(completed);
       } catch (e) {
-        console.error('Ошибка загрузки прогресса урока:', e);
         if (mounted) setIsCompleted(false);
       }
     };
-
     loadProgress();
 
     return () => { mounted = false; };
@@ -104,27 +99,24 @@ const LessonDetail = () => {
       payload.append('user_id', user.id);
       payload.append('lesson_id', id);
       payload.append('status', 'completed');
+      payload.append('status', 'completed');
       payload.append('progress_precent', '100');
-
-      console.log('Sending lesson progress payload from LessonDetail:', Object.fromEntries(payload));
 
       const response = await axios.post(API_LESSON_PROGRESS_URL, payload, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         timeout: 15000,
       });
       if (response.status === 200 || response.status === 201) {
-        console.log('Lesson progress saved for lesson:', id);
         setIsCompleted(true);
         try { localStorage.setItem('lesson_progress_changed', String(Date.now())); } catch (e) { /* ignore */ }
         alert('Урок отмечен как завершённый!');
       } else {
-        console.error('Ошибка отметки как завершённого:', response.status, response.data);
         alert('Не удалось сохранить прогресс урока');
       }
     } catch (e) {
-      console.error('Ошибка отметки как завершённого:', e);
       alert('Не удалось сохранить прогресс урока');
-    } finally {
+    }
+    finally {
       setSavingProgress(false);
     }
   };

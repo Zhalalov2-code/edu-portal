@@ -50,11 +50,9 @@ function Profile() {
                 }
             })
             setIsOpenModal(false);
-            console.log('ответ от сервера', res.data)
             setUser(res.data.user);
             localStorage.setItem('user', JSON.stringify(res.data.user));
         } catch (err) {
-            return console.log(err);
         }
     }
 

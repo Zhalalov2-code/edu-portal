@@ -28,7 +28,6 @@ function Chat() {
                 getMessages();
             }
         } catch (error) {
-            console.error('Ошибка при отправке сообщения:', error);
         } finally {
             setMessage('');
         }
@@ -37,21 +36,24 @@ function Chat() {
     const getMessages = useCallback(async () => {
         if (!currentUser) return;
         try {
-            const response = await axios.get(`https://zhalalov2.su/backend-school/messages/support?id_getter=${currentUser.id}&id_sender=${currentUser.id}`);
+            const response = await axios.get(`https://zhalalov2.su/backend-school/messages/users?id_sender=${currentUser.id}`);
             if (response.status === 200) {
                 let messagesData = response.data;
                 if (!Array.isArray(messagesData)) {
                     messagesData = Object.values(messagesData).find(val => Array.isArray(val)) || [];
                 }
-                const formattedMessages = messagesData.map(msg => ({
+                const filteredMessages = messagesData.filter(msg => 
+                    (msg.id_sender === currentUser.id && msg.id_getter === 1) || 
+                    (msg.id_sender === 1 && msg.id_getter === currentUser.id)
+                );
+                const formattedMessages = filteredMessages.map(msg => ({
                     text: msg.text,
                     isSupport: String(msg.id_sender) === '1',
-                    time: msg.time || '',
+                    time: msg.created_at ? new Date(msg.created_at).toLocaleString('ru-RU') : '',
                 }));
                 setMessages(formattedMessages);
             }
         } catch (error) {
-            console.error('Ошибка при получении сообщений:', error);
         }
     }, [currentUser]);
 
@@ -124,7 +126,6 @@ function Chat() {
                 </div>
 
                 <div className="chat-input-area">
-                    <button className="attachment-btn" aria-label="Прикрепить файл">📎</button>
                     <div className="input-wrapper">
                         <input
                             type="text"
@@ -135,7 +136,6 @@ function Chat() {
                             onKeyPress={handleKeyPress}
                             aria-label="Поле ввода сообщения"
                         />
-                        <button className="emoji-btn" aria-label="Вставить эмодзи">😊</button>
                     </div>
                     <button
                         onClick={handleSendMessage}

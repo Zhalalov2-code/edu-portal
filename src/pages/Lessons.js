@@ -19,25 +19,26 @@ const Lessons = () => {
     const [completedLessonIds, setCompletedLessonIds] = useState(new Set());
 
     const getCourse = useCallback(async () => {
-        const response = await axios.get(API_COURSES_URL);
-        if (response.status === 200) {
-            let arr_course = [];
-            if (Array.isArray(response.data)) {
-                arr_course = response.data[1];
-            } else {
-                const values = Object.values(response.data);
-                if (Array.isArray(values[1])) {
-                    arr_course = values[1];
-                } else if (Array.isArray(values[0])) {
-                    arr_course = values[0];
+        try {
+            const response = await axios.get(API_COURSES_URL);
+            if (response.status === 200) {
+                let arr_course = [];
+                if (Array.isArray(response.data)) {
+                    arr_course = response.data[1];
                 } else {
-                    arr_course = values;
+                    const values = Object.values(response.data);
+                    if (Array.isArray(values[1])) {
+                        arr_course = values[1];
+                    } else if (Array.isArray(values[0])) {
+                        arr_course = values[0];
+                    } else {
+                        arr_course = values;
+                    }
                 }
+                setCourses(arr_course);
             }
-            console.log('arr_course:', arr_course);
-            setCourses(arr_course);
-        } else {
-            console.error('Ошибка при загрузке курсов');
+        } catch (err) {
+            setCompletedLessonIds(new Set());
         }
     }, [API_COURSES_URL]);
 
@@ -49,7 +50,8 @@ const Lessons = () => {
             body.append('course_id', res.course_id);
 
             const response = await axios.post(API_LESSONS_URL, body, {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, timeout: 15000,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                timeout: 15000,
             });
 
             if (response.status === 200 || response.status === 201) {
@@ -57,16 +59,12 @@ const Lessons = () => {
                 setLessons(prev => [newLesson, ...prev]);
                 setIsModalOpen(false);
             } else {
-                console.error('Ошибка при создании урока', response.status, response.data);
                 alert('Не удалось создать урок');
             }
         } catch (err) {
-            console.error('Ошибка при создании урока:', err);
             alert('Ошибка при создании урока');
         }
     };
-
-    
 
     const getLessons = useCallback(async () => {
         try {
@@ -85,19 +83,14 @@ const Lessons = () => {
                         arr_lessons = values;
                     }
                 }
-                console.log('arr_lessons:', arr_lessons);
                 const filtered = arr_lessons.filter(l => {
-                    if (!l) return false;
-                    if (!l.course_id) return true;
                     if (!user || user.role !== 'Student') return true;
                     return enrolledCourseIds.has(String(l.course_id));
                 });
                 setLessons(filtered);
-            } else {
-                console.error('Ошибка при загрузке уроков');
             }
         } catch (err) {
-            console.error('Ошибка при загрузке уроков:', err);
+            setLessons([]);
         }
     }, [API_LESSONS_URL, enrolledCourseIds, user]);
 
@@ -121,11 +114,10 @@ const Lessons = () => {
             setEnrolledCourseIds(collected);
             return collected;
         } catch (err) {
-            console.error('Ошибка загрузки записей на курсы:', err);
             setEnrolledCourseIds(new Set());
             return new Set();
         }
-    }, [API_ENROLLMENTS_URL, userId]);
+    }, [userId]);
 
     const fetchLessonProgress = useCallback(async () => {
         if (!userId) {
@@ -150,15 +142,10 @@ const Lessons = () => {
             setCompletedLessonIds(collected);
             return collected;
         } catch (err) {
-            console.error('Ошибка загрузки прогресса уроков:', err);
             setCompletedLessonIds(new Set());
             return new Set();
         }
-    }, [API_LESSON_PROGRESS_URL, userId]);
-
-    useEffect(() => {
-        getCourse();
-    }, [getCourse]);
+    }, [userId, API_LESSON_PROGRESS_URL]);
 
     useEffect(() => {
         fetchEnrollments();
@@ -172,6 +159,10 @@ const Lessons = () => {
         getLessons();
     }, [getLessons]);
 
+    useEffect(() => {
+        getCourse();
+    }, [getCourse]);
+
     return (
         <div className="container lessons-page">
             <div className="card">
@@ -181,10 +172,14 @@ const Lessons = () => {
 
                     <div className="lessons-actions">
                         {user && user.role === 'Teacher' && (
-                            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>Добавить урок</button>
+                            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+                                Добавить урок
+                            </button>
                         )}
                         {!user && (
-                            <div style={{ color: '#666' }}>Войдите как преподаватель, чтобы добавлять уроки.</div>
+                            <div style={{ color: '#666' }}>
+                                Войдите как преподаватель, чтобы добавлять уроки.
+                            </div>
                         )}
                     </div>
 
@@ -214,7 +209,7 @@ const Lessons = () => {
                                                     <div className="lesson-actions">
                                                         {!isEnrolled ? (
                                                             (user && user.role === 'Student') ? (
-                                                                    <button className="btn btn-outline" onClick={() => {
+                                                                <button className="btn btn-outline" onClick={() => {
                                                                     if (!userId) {
                                                                         alert('Необходимо войти в систему, чтобы записаться на курс');
                                                                         return;
@@ -222,7 +217,6 @@ const Lessons = () => {
                                                                     const payload = new URLSearchParams();
                                                                     payload.append('user_id', userId);
                                                                     payload.append('course_id', String(l.course_id));
-                                                                    console.log('Sending enrollment payload from Lessons page:', Object.fromEntries(payload));
                                                                     axios.post(API_ENROLLMENTS_URL, payload.toString(), {
                                                                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                                                         timeout: 15000,
@@ -231,17 +225,24 @@ const Lessons = () => {
                                                                         getLessons();
                                                                         getCourse();
                                                                     }).catch(err => {
-                                                                        console.error('Ошибка записи на курс:', err);
                                                                         alert('Не удалось записаться на курс');
                                                                     });
-                                                                }}>Записаться на курс</button>
+                                                                }}>
+                                                                    Записаться на курс
+                                                                </button>
                                                             ) : (
-                                                                <div style={{ color: '#666' }}>Только студенты могут записываться на курс</div>
+                                                                <div style={{ color: '#666' }}>
+                                                                    Только студенты могут записываться на курс
+                                                                </div>
                                                             )
                                                         ) : (
                                                             (user && user.role === 'Student') ? (
                                                                 <>
-                                                                <Link to={`/lessons/${l.id}`}><button className="btn btn-primary">Открыть урок</button></Link>
+                                                                    <Link to={`/lessons/${l.id}`}>
+                                                                        <button className="btn btn-primary">
+                                                                            Открыть урок
+                                                                        </button>
+                                                                    </Link>
                                                                     {!finished ? (
                                                                         <button style={{ marginLeft: 8 }} className="btn btn-outline" onClick={() => {
                                                                             if (!userId) {
@@ -254,33 +255,41 @@ const Lessons = () => {
                                                                             payload.append('status', 'completed');
                                                                             payload.append('completed_at', new Date().toISOString());
                                                                             payload.append('progress_percent', '100');
-                                                                            console.log('Sending lesson progress payload:', Object.fromEntries(payload));
                                                                             axios.post(API_LESSON_PROGRESS_URL, payload.toString(), {
                                                                                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                                                                 timeout: 15000,
                                                                             }).then(async () => {
                                                                                 alert('Урок отмечен как завершённый. Тест теперь доступен.');
-                                                                                        try { localStorage.setItem('lesson_progress_changed', String(Date.now())); } catch (e) { /* ignore */ }
-                                                                                        await fetchLessonProgress();
-                                                                                        getLessons();
+                                                                                try {
+                                                                                    localStorage.setItem('lesson_progress_changed', String(Date.now()));
+                                                                                } catch (e) {
+                                                                                    // ignore
+                                                                                }
+                                                                                await fetchLessonProgress();
+                                                                                getLessons();
                                                                             }).catch(err => {
-                                                                                console.error('Ошибка сохранения прогресса урока:', err);
                                                                                 alert('Не удалось сохранить прогресс урока');
                                                                             });
-                                                                        }}>Завершить урок</button>
+                                                                        }}>
+                                                                            Завершить урок
+                                                                        </button>
                                                                     ) : (
-                                                                        <button style={{ marginLeft: 8 }} className="btn btn-success" onClick={() => alert('Открыть тест для этого урока')}>Сдать тест</button>
+                                                                        <button style={{ marginLeft: 8 }} className="btn btn-success" onClick={() => alert('Открыть тест для этого урока')}>
+                                                                            Сдать тест
+                                                                        </button>
                                                                     )}
                                                                 </>
                                                             ) : (
-                                                                <div style={{ color: '#666' }}>Только студенты могут проходить уроки/тесты</div>
+                                                                <div style={{ color: '#666' }}>
+                                                                    Только студенты могут проходить уроки/тесты
+                                                                </div>
                                                             )
                                                         )}
                                                     </div>
                                                 </div>
-                                                <div className="lesson-meta-right">
-                                                    {created ? new Date(created).toLocaleString() : ''}
-                                                </div>
+                                            </div>
+                                            <div className="lesson-meta-right">
+                                                {created ? new Date(created).toLocaleString() : ''}
                                             </div>
                                         </div>
                                     </li>
@@ -291,7 +300,11 @@ const Lessons = () => {
                 </div>
             </div>
             {isModalOpen && (
-                <CreateLessonModal courses={courses.length ? courses : [{id:'c1', title:'Без курса'}]} onClose={() => setIsModalOpen(false)} onCreate={handleCreate} />
+                <CreateLessonModal
+                    courses={courses.length ? courses : [{ id: 'c1', title: 'Без курса' }]}
+                    onClose={() => setIsModalOpen(false)}
+                    onCreate={handleCreate}
+                />
             )}
         </div>
     );

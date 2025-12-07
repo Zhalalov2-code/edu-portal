@@ -20,9 +20,6 @@ function AppInner() {
   const { user, isLoading, login, logout } = useAuth();
 
   if (user) {
-    console.log('Текущий пользователь:', user);
-    console.log('Роль пользователя:', user.role);
-    console.log('Тип роли:', typeof user.role);
   }
 
   const handleLogin = async (email, password) => {

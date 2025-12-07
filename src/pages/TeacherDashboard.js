@@ -66,7 +66,6 @@ const TeacherDashboard = ({ user }) => {
 
       return courseObj;
     } catch (e) {
-      console.error('Ошибка создания курса:', e);
       throw e;
     }
   };
@@ -90,7 +89,6 @@ const TeacherDashboard = ({ user }) => {
           try {
             raw = Object.fromEntries(raw);
           } catch (e) {
-            console.warn('Не удалось нормализовать response.data через Object.fromEntries', e);
           }
         }
 
@@ -99,15 +97,13 @@ const TeacherDashboard = ({ user }) => {
         if (!mounted) return;
 
         setRecentCourses(courses);
-
         setRecentActivity([]);
-        console.log('Полученные курсы:', response.data);
       } catch (err) {
-        console.error('Ошибка при загрузке данных дашборда:', err);
+        // ignore
       } finally {
         if (mounted) setIsLoading(false);
       }
-    };
+    }
 
     load();
 
@@ -133,7 +129,7 @@ const TeacherDashboard = ({ user }) => {
 
   return (
     <>
-    <div className="teacher-dashboard">
+      <div className="teacher-dashboard">
       <div className="container">
         <div className="dashboard-header">
           <div className="header-content">

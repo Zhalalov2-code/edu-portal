@@ -8,7 +8,7 @@ import '../css/Test.css';
 
 const RESPONSE_ARRAY_KEYS = ['data', 'tests', 'items', 'results', 'rows', 'list'];
 
-    const tryParseJson = (value) => {
+const tryParseJson = (value) => {
     if (typeof value !== 'string') {
         return { parsed: value, parsedFromJson: false };
     }
@@ -23,12 +23,12 @@ const RESPONSE_ARRAY_KEYS = ['data', 'tests', 'items', 'results', 'rows', 'list'
     }
 };
 
-    const looksLikeTest = (value) => {
+const looksLikeTest = (value) => {
     if (!value || typeof value !== 'object') return false;
     return ['id', 'test_id', 'testId', 'question', 'title', 'name'].some(key => Object.prototype.hasOwnProperty.call(value, key));
 };
 
-    const extractArrayPayload = (payload) => {
+const extractArrayPayload = (payload) => {
     const visited = new Set();
 
     const helper = (value, depth = 0) => {
@@ -85,7 +85,7 @@ const RESPONSE_ARRAY_KEYS = ['data', 'tests', 'items', 'results', 'rows', 'list'
     return [];
 };
 
-    const resolveCorrectAnswerIndex = (rawValue, options) => {
+const resolveCorrectAnswerIndex = (rawValue, options) => {
     if (rawValue == null) return null;
     if (typeof rawValue === 'number' && Number.isFinite(rawValue)) return rawValue;
 
@@ -108,7 +108,7 @@ const RESPONSE_ARRAY_KEYS = ['data', 'tests', 'items', 'results', 'rows', 'list'
     return null;
 };
 
-    const normalizeBackendTest = (entry) => {
+const normalizeBackendTest = (entry) => {
     if (entry == null) return null;
 
     if (typeof entry === 'string') {
@@ -198,11 +198,9 @@ const Test = () => {
                 createdAt: data?.created_at || data?.createdAt || new Date().toISOString(),
             };
 
-            console.log('Created test (toShow):', toShow);
             setTests(prev => [toShow, ...prev]);
             setIsAdding(false);
         } catch (err) {
-            console.error('Exception creating test:', err);
             alert('Ошибка при сохранении теста');
             setIsAdding(false);
         }
@@ -213,7 +211,6 @@ const Test = () => {
             const response = await axios.get(API_LESSONS_URL);
             if (response.status === 200) {
                 const arr_lessons = extractArrayPayload(response.data);
-                console.log('arr_lessons (raw):', arr_lessons);
                 const normalized = arr_lessons.map(item => {
                     const lessonEntry = tryParseJson(item).parsed ?? item;
                     if (Array.isArray(item) && item.length >= 2) {
@@ -232,40 +229,35 @@ const Test = () => {
                     }
                     return { id: lessonEntry, title: String(lessonEntry) };
                 }).filter(x => x && x.id !== undefined && x.id !== null);
-                console.log('arr_lessons (normalized):', normalized);
                 setLessons(normalized);
-            } else {
-                console.error('Ошибка при загрузке уроков');
             }
         } catch (err) {
-            console.error('Ошибка при загрузке уроков:', err);
+            setLessons([]);
         }
     };
 
-    const getTests = async () => {
-        try {
-            const response = await axios.get(API_TESTS_URL);
-            if (response.status === 200) {
-                const arr_tests = extractArrayPayload(response.data);
-                const usableRaw = [];
-                const normalized = [];
-                arr_tests.forEach(item => {
-                    const parsed = normalizeBackendTest(item);
-                    if (parsed && parsed.id != null) {
-                        normalized.push(parsed);
-                        usableRaw.push(item);
-                    }
-                });
-                console.log('arr_tests (raw usable):', usableRaw);
-                console.log('arr_tests (normalized):', normalized);
-                setTests(normalized);
-            } else {
-                console.error('Ошибка при загрузке тестов');
+    useEffect(() => {
+        const getTests = async () => {
+            try {
+                const response = await axios.get(API_TESTS_URL);
+                if (response.status === 200) {
+                    const arr_tests = extractArrayPayload(response.data);
+                    const normalized = [];
+                    arr_tests.forEach(item => {
+                        const parsed = normalizeBackendTest(item);
+                        if (parsed && parsed.id != null) {
+                            normalized.push(parsed);
+                        }
+                    });
+                    setTests(normalized);
+                }
+            } catch (err) {
+                setTests([]);
             }
-        } catch (err) {
-            console.error('Ошибка при загрузке тестов:', err);
-        }
-    };
+        };
+
+        getTests();
+    }, [API_TESTS_URL]);
 
     const fetchLessonProgress = useCallback(async () => {
         if (!userId) {
@@ -292,16 +284,9 @@ const Test = () => {
             });
             setCompletedLessons(completedCollected);
         } catch (err) {
-            console.error('Ошибка загрузки прогресса уроков:', err);
             setCompletedLessons(new Set());
         }
     }, [API_LESSON_PROGRESS_URL, userId]);
-
-    useEffect(() => {
-        getLessons();
-        getTests();
-    }, []);
-
     useEffect(() => {
         fetchLessonProgress();
     }, [fetchLessonProgress]);
@@ -309,37 +294,39 @@ const Test = () => {
     useEffect(() => {
         if (typeof window === 'undefined') return undefined;
 
-        const readCompleted = () => {
+        const syncCompleted = () => {
             try {
                 const stored = JSON.parse(localStorage.getItem(completedStorageKey) || '[]');
                 if (Array.isArray(stored)) {
-                    return Array.from(new Set(stored.map(String)));
+                    setCompletedTests(Array.from(new Set(stored.map(String))));
                 }
             } catch (err) {
-                console.error('Ошибка чтения completedTests:', err);
+                // ignore
             }
-            return [];
         };
-
-        const syncCompleted = () => {
-            setCompletedTests(readCompleted());
-        };
-
-        syncCompleted();
 
         const handleStorage = (event) => {
             if (!event || !event.key || event.key === completedStorageKey) {
                 syncCompleted();
             }
             if (event && event.key === 'lesson_progress_changed') {
-                try { getLessons(); fetchLessonProgress(); } catch (e) { /* ignore */ }
+                try {
+                    getLessons();
+                    fetchLessonProgress();
+                } catch (e) {
+                    // ignore
+                }
             }
         };
 
-    window.addEventListener('storage', handleStorage);
-    window.addEventListener('focus', syncCompleted);
-    const handleCompletedTestsChanged = () => { syncCompleted(); };
-    window.addEventListener('completedTestsChanged', handleCompletedTestsChanged);
+        window.addEventListener('storage', handleStorage);
+        window.addEventListener('focus', syncCompleted);
+        const handleCompletedTestsChanged = () => {
+            syncCompleted();
+        };
+        window.addEventListener('completedTestsChanged', handleCompletedTestsChanged);
+
+        syncCompleted();
 
         return () => {
             window.removeEventListener('storage', handleStorage);

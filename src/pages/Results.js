@@ -154,7 +154,6 @@ const Results = () => {
                     } catch (e) { /* ignore localStorage errors */ }
                 }
             } catch (err) {
-                console.error('Ошибка при загрузке результатов:', err);
                 if (mounted) {
                     setResults([]);
                     setTestsById({});

@@ -15,8 +15,7 @@ const Register = ({ onLogin }) => {
   const handleChange = (e) => {
     const { name, value, type } = e.target;
     if (type === 'file') {
-      const file = e.target.files[0];
-      setUser(prev => ({ ...prev, [name]: file }));
+      setUser(prev => ({ ...prev, [name]: e.target.files[0] }));
     } else {
       setUser(prev => ({ ...prev, [name]: value }));
     }
@@ -46,9 +45,6 @@ const Register = ({ onLogin }) => {
     if (!user.role) {
       newErrors.role = 'Выберите роль';
     }
-    if (!user.avatar || user.avatar.length === 0) {
-      newErrors.avatar = 'Загрузите 1 фото';
-    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -57,60 +53,34 @@ const Register = ({ onLogin }) => {
     e.preventDefault();
     if (!validateForm()) return;
     setIsLoading(true);
-    console.log('[Register] submit', { user });
-    console.log('[Register] API_URL', API_URL);
     try {
 
-      const form = new FormData();
-      form.append('name', user.name || '');
-      form.append('email', user.email || '');
-      form.append('password', user.password || '');
-      form.append('role', user.role || 'student');
-      if (user.avatar instanceof File) {
-        form.append('avatar', user.avatar);
-      }
+      const body = new URLSearchParams();
+      body.append('name', user.name || '');
+      body.append('email', user.email || '');
+      body.append('password', user.password || '');
+      body.append('role', user.role || 'student');
       const response = await axios({
         method: 'post',
         url: API_URL,
-        data: form,
-        headers: { 'Content-Type': 'multipart/form-data' },
+        data: body,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         timeout: 15000,
       });
 
-      console.log('[Register] response status:', response.status);
-      console.log('[Register] response data:', response.data);
-
       if (response.status === 200 || response.status === 201) {
-        const created = response.data?.data || response.data || {};
-        console.log('[Register] created user normalized:', created);
-
-        if (typeof onLogin === 'function') {
-          try {
-            await onLogin(user.email, user.password);
-          } catch (loginErr) {
-            console.warn('[Register] onLogin failed:', loginErr);
-          }
+        try {
+          await onLogin(user.email, user.password);
+        } catch (loginErr) {
+          
         }
-
         navigate('/');
       } else {
         const serverMsg = response.data?.error || response.data?.message || JSON.stringify(response.data);
-        console.warn('[Register] server returned non-OK status', response.status, serverMsg);
         setErrors({ general: serverMsg || 'Ошибка регистрации' });
       }
     } catch (err) {
-
-      console.error('[Register] Exception during registration:', err);
-      if (err?.response) {
-        console.error('[Register] err.response.data:', err.response.data);
-        console.error('[Register] err.response.status:', err.response.status);
-        setErrors({ general: err.response.data?.error || err.response.data?.message || 'Ошибка сервера' });
-      } else if (err?.request) {
-        console.error('[Register] no response received, request:', err.request);
-        setErrors({ general: 'Нет ответа от сервера. Проверьте подключение.' });
-      } else {
-        setErrors({ general: err.message || 'Неизвестная ошибка' });
-      }
+      setErrors({ general: 'Ошибка при регистрации' });
     } finally {
       setIsLoading(false);
     }
@@ -226,16 +196,6 @@ const Register = ({ onLogin }) => {
             {errors.confirmPassword && (
               <span className="error-message">{errors.confirmPassword}</span>
             )}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="avatar" className="form-label">
-              Фото профиля (можно загрузить до 5 фото)
-            </label>
-            {errors.avatar && (
-              <span className="error-message">{errors.avatar}</span>
-            )}
-            <input type="file" id="avatar" name="avatar" onChange={handleChange} className="form-input" disabled={isLoading} />
           </div>
 
           <div className="form-actions">

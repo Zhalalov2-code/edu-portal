@@ -93,7 +93,6 @@ const AdminPanel = () => {
                 alert('Ошибка отправки сообщения');
             }
         } catch (error) {
-            console.error('Ошибка отправки сообщения:', error);
             alert('Не удалось отправить сообщение. Проверьте консоль.');
         }
     }
@@ -134,7 +133,6 @@ const AdminPanel = () => {
                 }
             }
         } catch (error) {
-            console.error('Ошибка загрузки сообщений поддержки:', error);
         }
     }
 
