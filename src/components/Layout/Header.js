@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../css/Header.css';
 
-const Header = ({ user, onLogout }) => {
+const Header = ({ user, onLogout}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -67,18 +67,18 @@ const Header = ({ user, onLogout }) => {
           <div className="user-menu">
             {user ? (
               <div className="user-dropdown">
-                <button 
+                <button
                   className="user-button"
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
                   <div className="user-avatar-container-header">
                     {user.avatar ? (
-                      <img src={`https://zhalalov2.su/backend-school/uploads/${user.avatar}`} alt="Avatar" className="user-avatar-header" />
+                      <img src={`https://zhalalov2.su/school/uploads/${user.avatar}`} alt="Avatar" className="user-avatar-header" />
                     ) : (
-                      user.name.charAt(0).toUpperCase()
+                      user.name ? user.name.charAt(0).toUpperCase() : '?'
                     )}
                   </div>
-                  <span className="user-name">{user.name}</span>
+                  <span className="user-name">{user.name || 'Пользователь'}</span>
                   <svg className="dropdown-icon" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
@@ -86,8 +86,8 @@ const Header = ({ user, onLogout }) => {
 
                 {isMenuOpen && (
                   <div className="dropdown-menu">
-                    <Link 
-                      to="/profile" 
+                    <Link
+                      to="/profile"
                       className="dropdown-item"
                       onClick={() => setIsMenuOpen(false)}
                     >
@@ -97,8 +97,8 @@ const Header = ({ user, onLogout }) => {
                       Мой профиль
                     </Link>
 
-                    <Link 
-                      to="/results" 
+                    <Link
+                      to="/results"
                       className="dropdown-item"
                       onClick={() => setIsMenuOpen(false)}
                     >
@@ -110,8 +110,8 @@ const Header = ({ user, onLogout }) => {
                     </Link>
 
                     {user.role === 'Admin' && (
-                      <Link 
-                        to="/admin" 
+                      <Link
+                        to="/admin"
                         className="dropdown-item"
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -121,10 +121,10 @@ const Header = ({ user, onLogout }) => {
                         Панель администратора
                       </Link>
                     )}
-                    
+
                     {user.role === 'teacher' && (
-                      <Link 
-                        to="/teacher/dashboard" 
+                      <Link
+                        to="/teacher/dashboard"
                         className="dropdown-item"
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -134,10 +134,10 @@ const Header = ({ user, onLogout }) => {
                         Панель преподавателя
                       </Link>
                     )}
-                    
+
                     <div className="dropdown-divider"></div>
-                    
-                    <button 
+
+                    <button
                       className="dropdown-item dropdown-item-danger"
                       onClick={handleLogout}
                     >
@@ -162,7 +162,7 @@ const Header = ({ user, onLogout }) => {
           </div>
 
           {/* Мобильное меню */}
-          <button 
+          <button
             className="mobile-menu-button"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
@@ -175,8 +175,8 @@ const Header = ({ user, onLogout }) => {
         {/* Мобильная навигация */}
         {isMenuOpen && (
           <div className="mobile-nav">
-            <Link 
-              to="/courses" 
+            <Link
+              to="/courses"
               className="mobile-nav-link"
               onClick={() => setIsMenuOpen(false)}
             >
@@ -200,12 +200,12 @@ const Header = ({ user, onLogout }) => {
                 </Link>
               </>
             )}
-            
+
             {user ? (
               <>
                 {user.role === 'Admin' && (
-                  <Link 
-                    to="/admin" 
+                  <Link
+                    to="/admin"
                     className="mobile-nav-link"
                     onClick={() => setIsMenuOpen(false)}
                   >
@@ -213,38 +213,38 @@ const Header = ({ user, onLogout }) => {
                   </Link>
                 )}
                 {user.role === 'teacher' && (
-                  <Link 
-                    to="/teacher/dashboard" 
+                  <Link
+                    to="/teacher/dashboard"
                     className="mobile-nav-link"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Панель преподавателя
                   </Link>
                 )}
-                <Link 
-                  to="/results" 
+                <Link
+                  to="/results"
                   className="mobile-nav-link"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Мои результаты
                 </Link>
-                <Link 
-                  to="/profile" 
+                <Link
+                  to="/profile"
                   className="mobile-nav-link"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Профиль
                 </Link>
                 {user.role !== 'Admin' && (
-                  <Link 
-                    to="/chat" 
+                  <Link
+                    to="/chat"
                     className="mobile-nav-link"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Чат
                   </Link>
                 )}
-                <button 
+                <button
                   className="mobile-nav-link mobile-nav-logout"
                   onClick={handleLogout}
                 >
@@ -253,15 +253,15 @@ const Header = ({ user, onLogout }) => {
               </>
             ) : (
               <div className="mobile-auth-buttons">
-                <Link 
-                  to="/login" 
+                <Link
+                  to="/login"
                   className="btn btn-outline"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Войти
                 </Link>
-                <Link 
-                  to="/register" 
+                <Link
+                  to="/register"
                   className="btn btn-primary"
                   onClick={() => setIsMenuOpen(false)}
                 >

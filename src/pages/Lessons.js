@@ -8,13 +8,13 @@ import '../css/Lessons.css';
 const Lessons = () => {
     const [lessons, setLessons] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const API_COURSES_URL = 'https://zhalalov2.su/backend-school/courses';
-    const API_LESSONS_URL = 'https://zhalalov2.su/backend-school/lessons';
+    const API_COURSES_URL = 'https://zhalalov2.su/school/courses';
+    const API_LESSONS_URL = 'https://zhalalov2.su/school/lessons';
     const [courses, setCourses] = useState([]);
     const { user } = useAuth();
     const userId = user?.id != null ? String(user.id) : null;
-    const API_ENROLLMENTS_URL = 'https://zhalalov2.su/backend-school/course_enrollments';
-    const API_LESSON_PROGRESS_URL = 'https://zhalalov2.su/backend-school/lesson_progress';
+    const API_ENROLLMENTS_URL = 'https://zhalalov2.su/school/course_enrollments';
+    const API_LESSON_PROGRESS_URL = 'https://zhalalov2.su/school/lesson_progress';
     const [enrolledCourseIds, setEnrolledCourseIds] = useState(new Set());
     const [completedLessonIds, setCompletedLessonIds] = useState(new Set());
 

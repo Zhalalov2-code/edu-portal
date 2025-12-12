@@ -2,15 +2,17 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/Auth.css';
 import axios from 'axios';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../utils/firebaseConfig';
 
-const Register = ({ onLogin }) => {
+const Register = () => {
   const [user, setUser] = useState(
-    { name: '', email: '', password: '', confirmPassword: '', role: 'student', avatar: ''},
+    { name: '', email: '', password: '', confirmPassword: '', role: 'student', avatar: '' },
   );
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const API_URL = 'https://zhalalov2.su/backend-school/users';
+  const API_URL = 'https://zhalalov2.su/school/users';
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -55,11 +57,16 @@ const Register = ({ onLogin }) => {
     setIsLoading(true);
     try {
 
+      const userCredential = await createUserWithEmailAndPassword(auth, user.email, user.password);
+      const firebaseUser = userCredential.user;
+
       const body = new URLSearchParams();
+      body.append('uid', firebaseUser.uid);
       body.append('name', user.name || '');
-      body.append('email', user.email || '');
+      body.append('email', firebaseUser.email || '');
       body.append('password', user.password || '');
       body.append('role', user.role || 'student');
+
       const response = await axios({
         method: 'post',
         url: API_URL,
@@ -69,15 +76,10 @@ const Register = ({ onLogin }) => {
       });
 
       if (response.status === 200 || response.status === 201) {
-        try {
-          await onLogin(user.email, user.password);
-        } catch (loginErr) {
-          
-        }
-        navigate('/');
+        navigate('/login');
+        alert('Регистрация прошла успешно! Теперь вы можете войти в систему.');
       } else {
-        const serverMsg = response.data?.error || response.data?.message || JSON.stringify(response.data);
-        setErrors({ general: serverMsg || 'Ошибка регистрации' });
+        console.error('Ошибка регистрации:', response);
       }
     } catch (err) {
       setErrors({ general: 'Ошибка при регистрации' });

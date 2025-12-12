@@ -19,7 +19,7 @@ function Chat() {
             body.append('id_getter', '1');
             body.append('name_sender', currentUser.name);
 
-            const response = await axios.post('https://zhalalov2.su/backend-school/messages/support', body.toString(), {
+            const response = await axios.post('https://zhalalov2.su/school/messages/support', body.toString(), {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
@@ -36,7 +36,7 @@ function Chat() {
     const getMessages = useCallback(async () => {
         if (!currentUser) return;
         try {
-            const response = await axios.get(`https://zhalalov2.su/backend-school/messages/users?id_sender=${currentUser.id}`);
+            const response = await axios.get(`https://zhalalov2.su/school/messages/users?id_sender=${currentUser.id}`);
             if (response.status === 200) {
                 let messagesData = response.data;
                 if (!Array.isArray(messagesData)) {

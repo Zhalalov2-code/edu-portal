@@ -155,9 +155,9 @@ const Test = () => {
     const [tests, setTests] = useState([]);
     const [completedTests, setCompletedTests] = useState([]);
     const [isAdding, setIsAdding] = useState(false);
-    const API_TESTS_URL = 'https://zhalalov2.su/backend-school/tests';
-    const API_LESSONS_URL = 'https://zhalalov2.su/backend-school/lessons';
-    const API_LESSON_PROGRESS_URL = 'https://zhalalov2.su/backend-school/lesson_progress';
+    const API_TESTS_URL = 'https://zhalalov2.su/school/tests';
+    const API_LESSONS_URL = 'https://zhalalov2.su/school/lessons';
+    const API_LESSON_PROGRESS_URL = 'https://zhalalov2.su/school/lesson_progress';
     const [lessons, setLessons] = useState([]);
     const { user } = useAuth();
     const userId = user?.id != null ? String(user.id) : null;

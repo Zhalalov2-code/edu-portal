@@ -1,69 +1,22 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
-
-const API_URL = 'https://zhalalov2.su/backend-school/users';
+import { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-            try {
-                const raw = localStorage.getItem('user');
-                if (raw && raw !== 'undefined' && raw !== 'null') {
-                    try {
-                        const parsed = JSON.parse(raw);
-                        if (parsed && typeof parsed === 'object') {
-                            setUser(parsed);
-                        } else {
-                            localStorage.removeItem('user');
-                        }
-                    } catch (e) {
-                        localStorage.removeItem('user');
-                    }
-                } else if (raw) {
-                    localStorage.removeItem('user');
-                }
-            } finally {
-                setIsLoading(false);
-            }
-    }, []);
-
-    const login = async (email, password) => {
-        try {
-            const response = await axios.get(API_URL, { params: { email, password } });
-            const data = response.data;
-            let loggedInUser = null;
-
-            if (Array.isArray(data) && data.length > 0) {
-                loggedInUser = data[0];
-            } else if (data && data.status === 200 && data.user) {
-                loggedInUser = data.user;
-            }
-
-            if (loggedInUser) {
-                setUser(loggedInUser);
-                localStorage.setItem('user', JSON.stringify(loggedInUser));
-                return { success: true, user: loggedInUser };
-            }
-
-            return { success: false, message: data?.error || data?.message || 'Неверный email или пароль' };
-        } catch (error) {
-            return { success: false, message: 'Ошибка сервера' };
-        }
-    };
+    const [user, setUser] = useState(() => {
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
 
     const logout = () => {
         setUser(null);
         localStorage.removeItem('user');
     };
 
-        return (
-            <AuthContext.Provider value={{ user, isLoading, login, logout, setUser }}>
-                {children}
-            </AuthContext.Provider>
+    return (
+        <AuthContext.Provider value={{ user, setUser, logout }}>
+            {children}
+        </AuthContext.Provider>
     );
 };
 

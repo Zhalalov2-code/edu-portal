@@ -307,3 +307,56 @@
     transform: translateY(0);
   }
 }
+
+/* Модальное окно для выбора роли */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: var(--shadow-xl);
+  animation: form-appear 0.3s ease-out;
+}
+
+.ili{
+  display: block;
+  margin: 1rem 0;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.modal-content h2 {
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.modal-content p {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.role-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.role-buttons .btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+}

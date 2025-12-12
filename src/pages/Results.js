@@ -5,8 +5,8 @@ import { useAuth } from '../utils/authContext';
 import { ensureArrayOptions } from '../utils/options';
 import '../css/Results.css';
 
-const API_RESULTS_URL = 'https://zhalalov2.su/backend-school/results';
-const API_TESTS_URL = 'https://zhalalov2.su/backend-school/tests';
+const API_RESULTS_URL = 'https://zhalalov2.su/school/results';
+const API_TESTS_URL = 'https://zhalalov2.su/school/tests';
 
 const extractArray = (payload) => {
     if (!payload) return [];

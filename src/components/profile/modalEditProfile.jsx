@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import '../../css/modalEditProfile.css';
 
 function ModalEditProfile({ isOpen, onClose, userData, onSave }) {
     const [formData, setFormData] = useState({
         name: userData?.name || '',
-        email: userData?.email || '',
         avatar: userData?.avatar || '',
     });
 
@@ -43,19 +42,6 @@ function ModalEditProfile({ isOpen, onClose, userData, onSave }) {
                             value={formData.name}
                             onChange={handleChange}
                             placeholder="Введите имя"
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="email">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="example@email.com"
                             required
                         />
                     </div>

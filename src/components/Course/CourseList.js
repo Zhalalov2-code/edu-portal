@@ -10,8 +10,8 @@ const CourseList = ({ user }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const API_URL = 'https://zhalalov2.su/backend-school/courses';
-  const API_ENROLLMENTS_URL = 'https://zhalalov2.su/backend-school/course_enrollments';
+  const API_URL = 'https://zhalalov2.su/school/courses';
+  const API_ENROLLMENTS_URL = 'https://zhalalov2.su/school/course_enrollments';
   const userId = user?.id != null ? String(user.id) : null;
   
 

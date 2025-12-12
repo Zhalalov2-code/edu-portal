@@ -85,7 +85,7 @@ const AdminPanel = () => {
             body.append('name_sender', 'Support team');
             body.append('text', reply);
             
-            const response = await axios.post('https://zhalalov2.su/backend-school/messages/support', body);
+            const response = await axios.post('https://zhalalov2.su/school/messages/support', body);
             if (response.status === 200) {
                 setReply('');
                 getMessagesSupport();
@@ -99,7 +99,7 @@ const AdminPanel = () => {
 
     const getMessagesSupport = async () => {
         try {
-            const response = await axios.get('https://zhalalov2.su/backend-school/messages/support?id_getter=1&id_sender=1');
+            const response = await axios.get('https://zhalalov2.su/school/messages/support?id_getter=1&id_sender=1');
             if (response.status === 200) {
                 let messagesData = response.data;
                 

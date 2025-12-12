@@ -8,7 +8,7 @@ const TeacherDashboard = ({ user }) => {
   const [recentCourses, setRecentCourses] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const API_URL = 'https://zhalalov2.su/backend-school';
+  const API_URL = 'https://zhalalov2.su/school';
 
   const getActivityIcon = (type) => {
     switch (type) {
