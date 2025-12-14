@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL_BASE } from '../utils/API_URL_CONF';
 import { useAuth } from '../utils/authContext';
 import '../css/TestDetail.css';
 import { ensureArrayOptions } from '../utils/options';
 
-const API_TESTS_URL = 'https://zhalalov2.su/school/tests';
-const API_RESULTS_URL = 'https://zhalalov2.su/school/results';
-const API_LESSON_PROGRESS_URL = 'https://zhalalov2.su/school/lesson_progress';
+const API_TESTS_URL = `${API_URL_BASE}/tests`;
+const API_RESULTS_URL = `${API_URL_BASE}/results`;
+const API_LESSON_PROGRESS_URL = `${API_URL_BASE}/lesson_progress`;
 
 const TestDetail = () => {
     const { id } = useParams();

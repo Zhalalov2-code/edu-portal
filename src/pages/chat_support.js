@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../utils/authContext';
 import axios from 'axios';
-import '../css/Chat.css';
+import { API_URL_BASE } from '../utils/API_URL_CONF';
+import '../css/ChatSupport.css';
 
-function Chat() {
+function ChatSupport() {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
 
@@ -19,7 +20,7 @@ function Chat() {
             body.append('id_getter', '1');
             body.append('name_sender', currentUser.name);
 
-            const response = await axios.post('https://zhalalov2.su/school/messages/support', body.toString(), {
+            const response = await axios.post(`${API_URL_BASE}/messages_support/support`, body.toString(), {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
@@ -36,7 +37,7 @@ function Chat() {
     const getMessages = useCallback(async () => {
         if (!currentUser) return;
         try {
-            const response = await axios.get(`https://zhalalov2.su/school/messages/users?id_sender=${currentUser.id}`);
+            const response = await axios.get(`${API_URL_BASE}/messages_support/users?id_sender=${currentUser.id}`);
             if (response.status === 200) {
                 let messagesData = response.data;
                 if (!Array.isArray(messagesData)) {
@@ -150,4 +151,4 @@ function Chat() {
     );
 }
 
-export default Chat;
+export default ChatSupport;

@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../css/TeacherDashboard.css';
 import axios from 'axios';
+import { API_URL_BASE } from '../utils/API_URL_CONF';
 import CreateCourseModal from '../components/Course/CreateCourseModal';
 
 const TeacherDashboard = ({ user }) => {
   const [recentCourses, setRecentCourses] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const API_URL = 'https://zhalalov2.su/school';
+  const API_URL = API_URL_BASE;
 
   const getActivityIcon = (type) => {
     switch (type) {
@@ -108,7 +109,7 @@ const TeacherDashboard = ({ user }) => {
     load();
 
     return () => { mounted = false; };
-  }, [user]);
+  }, [user, API_URL]);
 
   if (isLoading) {
     return (

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL_BASE } from '../utils/API_URL_CONF';
 import { useAuth } from '../utils/authContext';
 import '../css/LessonDetail.css';
 
@@ -10,7 +11,7 @@ const LessonDetail = () => {
   const { user } = useAuth();
   const [lesson, setLesson] = useState(null);
   const [loading, setLoading] = useState(true);
-  const API_LESSON_PROGRESS_URL = 'https://zhalalov2.su/school/lesson_progress';
+  const API_LESSON_PROGRESS_URL = `${API_URL_BASE}/lesson_progress`;
   const [isCompleted, setIsCompleted] = useState(false);
   const [savingProgress, setSavingProgress] = useState(false);
 
@@ -18,7 +19,7 @@ const LessonDetail = () => {
     const fetchLesson = async () => {
       setLoading(true);
       try {
-        const url = `https://zhalalov2.su/school/lessons/${id}`;
+        const url = `${API_URL_BASE}/lessons/${id}`;
         const res = await axios.get(url);
         if (res.status === 200) {
           let data = res.data?.data ?? res.data ?? null;
@@ -82,7 +83,7 @@ const LessonDetail = () => {
     loadProgress();
 
     return () => { mounted = false; };
-  }, [id, user]);
+  }, [id, user, API_LESSON_PROGRESS_URL]);
 
   const handleFinish = async () => {
     if (!user || !user.id) {

@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { API_URL_BASE } from '../../utils/API_URL_CONF';
 import '../../css/Header.css';
 
 const Header = ({ user, onLogout}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isChatDropdownOpen, setIsChatDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -56,9 +58,42 @@ const Header = ({ user, onLogout}) => {
                   Профиль
                 </Link>
                 {user.role !== 'Admin' && (
-                  <Link to="/chat" className="nav-link">
-                    Чат
-                  </Link>
+                  <div style={{ position: 'relative', display: 'inline-block' }}>
+                    <button 
+                      className="nav-link" 
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0', font: 'inherit' }}
+                      onClick={() => setIsChatDropdownOpen(!isChatDropdownOpen)}
+                    >
+                      Чаты
+                      <svg style={{ width: '16px', height: '16px', marginLeft: '4px', display: 'inline-block', verticalAlign: 'middle' }} viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                    {isChatDropdownOpen && (
+                      <div className="dropdown-menu" style={{ position: 'absolute', top: '100%', left: '0', marginTop: '8px', minWidth: '220px' }}>
+                        <Link
+                          to="/chat_support"
+                          className="dropdown-item"
+                          onClick={() => setIsChatDropdownOpen(false)}
+                        >
+                          <svg className="dropdown-item-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
+                          </svg>
+                          Чат с поддержкой
+                        </Link>
+                        <Link
+                          to="/chat_users"
+                          className="dropdown-item"
+                          onClick={() => setIsChatDropdownOpen(false)}
+                        >
+                          <svg className="dropdown-item-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                          </svg>
+                          Чат с пользователями
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 )}
               </>
             )}
@@ -73,7 +108,7 @@ const Header = ({ user, onLogout}) => {
                 >
                   <div className="user-avatar-container-header">
                     {user.avatar ? (
-                      <img src={`https://zhalalov2.su/school/uploads/${user.avatar}`} alt="Avatar" className="user-avatar-header" />
+                      <img src={`${API_URL_BASE}/uploads/${user.avatar}`} alt="Avatar" className="user-avatar-header" />
                     ) : (
                       user.name ? user.name.charAt(0).toUpperCase() : '?'
                     )}
@@ -198,6 +233,13 @@ const Header = ({ user, onLogout}) => {
                 >
                   Тесты
                 </Link>
+                <Link
+                  to="/chat_support"
+                  className="mobile-nav-link"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Чат поддержки
+                </Link>
               </>
             )}
 
@@ -237,11 +279,11 @@ const Header = ({ user, onLogout}) => {
                 </Link>
                 {user.role !== 'Admin' && (
                   <Link
-                    to="/chat"
+                    to="/chat_support"
                     className="mobile-nav-link"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Чат
+                    Чат поддержки
                   </Link>
                 )}
                 <button

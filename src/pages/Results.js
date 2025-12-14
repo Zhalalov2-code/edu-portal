@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL_BASE } from '../utils/API_URL_CONF';
 import { useAuth } from '../utils/authContext';
 import { ensureArrayOptions } from '../utils/options';
 import '../css/Results.css';
 
-const API_RESULTS_URL = 'https://zhalalov2.su/school/results';
-const API_TESTS_URL = 'https://zhalalov2.su/school/tests';
+const API_RESULTS_URL = `${API_URL_BASE}/results`;
+const API_TESTS_URL = `${API_URL_BASE}/tests`;
 
 const extractArray = (payload) => {
     if (!payload) return [];

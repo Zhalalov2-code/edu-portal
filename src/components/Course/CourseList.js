@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import CourseCard from './CourseCard';
 import '../../css/Course.css';
+import { API_URL_BASE } from '../../utils/API_URL_CONF';
 import axios from 'axios';
 
 const CourseList = ({ user }) => {
@@ -10,8 +11,8 @@ const CourseList = ({ user }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const API_URL = 'https://zhalalov2.su/school/courses';
-  const API_ENROLLMENTS_URL = 'https://zhalalov2.su/school/course_enrollments';
+  const API_URL = `${API_URL_BASE}/courses`;
+  const API_ENROLLMENTS_URL = `${API_URL_BASE}/course_enrollments`;
   const userId = user?.id != null ? String(user.id) : null;
   
 
@@ -84,7 +85,7 @@ const CourseList = ({ user }) => {
     };
 
     loadCourses();
-  }, [fetchEnrollments]);
+  }, [API_URL, fetchEnrollments]);
 
   useEffect(() => {
   let filtered = Array.isArray(courses) ? courses.slice() : [];

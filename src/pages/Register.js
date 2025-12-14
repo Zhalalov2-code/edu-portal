@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/Auth.css';
 import axios from 'axios';
+import { API_URL_BASE } from '../utils/API_URL_CONF';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../utils/firebaseConfig';
 
@@ -12,7 +13,7 @@ const Register = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const API_URL = 'https://zhalalov2.su/school/users';
+  const API_URL = `${API_URL_BASE}/users`;
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;

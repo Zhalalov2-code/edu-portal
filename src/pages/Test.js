@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import CreateTestModal from '../components/Test/CreateTestModal';
 import axios from 'axios';
+import { API_URL_BASE } from '../utils/API_URL_CONF';
 import { useAuth } from '../utils/authContext';
 import { ensureArrayOptions } from '../utils/options';
 import '../css/Test.css';
@@ -155,9 +156,9 @@ const Test = () => {
     const [tests, setTests] = useState([]);
     const [completedTests, setCompletedTests] = useState([]);
     const [isAdding, setIsAdding] = useState(false);
-    const API_TESTS_URL = 'https://zhalalov2.su/school/tests';
-    const API_LESSONS_URL = 'https://zhalalov2.su/school/lessons';
-    const API_LESSON_PROGRESS_URL = 'https://zhalalov2.su/school/lesson_progress';
+    const API_TESTS_URL = `${API_URL_BASE}/tests`;
+    const API_LESSONS_URL = `${API_URL_BASE}/lessons`;
+    const API_LESSON_PROGRESS_URL = `${API_URL_BASE}/lesson_progress`;
     const [lessons, setLessons] = useState([]);
     const { user } = useAuth();
     const userId = user?.id != null ? String(user.id) : null;
@@ -206,7 +207,7 @@ const Test = () => {
         }
     };
 
-    const getLessons = async () => {
+    const getLessons = useCallback(async () => {
         try {
             const response = await axios.get(API_LESSONS_URL);
             if (response.status === 200) {
@@ -234,7 +235,7 @@ const Test = () => {
         } catch (err) {
             setLessons([]);
         }
-    };
+    }, [API_LESSONS_URL]);
 
     useEffect(() => {
         const getTests = async () => {
@@ -333,7 +334,7 @@ const Test = () => {
             window.removeEventListener('focus', syncCompleted);
             window.removeEventListener('completedTestsChanged', handleCompletedTestsChanged);
         };
-    }, [completedStorageKey, fetchLessonProgress]);
+    }, [completedStorageKey, fetchLessonProgress, getLessons]);
 
     const completedTestsSet = useMemo(() => new Set(completedTests.map(String)), [completedTests]);
 

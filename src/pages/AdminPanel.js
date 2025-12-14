@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL_BASE } from '../utils/API_URL_CONF';
 import '../css/AdminPanel.css';
 
 const SupportTab = ({ messages, selectedUserId, onSelectUser, replyText, onChangeReplyText, onSendReply, users }) => {
@@ -85,7 +86,7 @@ const AdminPanel = () => {
             body.append('name_sender', 'Support team');
             body.append('text', reply);
             
-            const response = await axios.post('https://zhalalov2.su/school/messages/support', body);
+            const response = await axios.post(`${API_URL_BASE}/messages_support/support`, body);
             if (response.status === 200) {
                 setReply('');
                 getMessagesSupport();
@@ -99,7 +100,7 @@ const AdminPanel = () => {
 
     const getMessagesSupport = async () => {
         try {
-            const response = await axios.get('https://zhalalov2.su/school/messages/support?id_getter=1&id_sender=1');
+            const response = await axios.get(`${API_URL_BASE}/messages_support/support?id_getter=1&id_sender=1`);
             if (response.status === 200) {
                 let messagesData = response.data;
                 

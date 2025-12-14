@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/Auth.css';
 import axios from 'axios';
+import { API_URL_BASE } from '../utils/API_URL_CONF';
 import { useAuth } from '../utils/authContext';
 import { signWithGoogle } from '../utils/firebaseConfig';
 
@@ -43,7 +44,7 @@ const Login = () => {
     if (!validateForm()) return;
     setIsLoading(true);
     try {
-      const response = await axios.get('https://zhalalov2.su/school/users', {
+      const response = await axios.get(`${API_URL_BASE}/users`, {
         params: {
           email: formData.email,
           password: formData.password
@@ -80,7 +81,7 @@ const Login = () => {
       const result = await signWithGoogle();
       const googleUser = result.user;
 
-      const response = await axios.get(`https://zhalalov2.su/school/users?uid=${googleUser.uid}`);
+      const response = await axios.get(`${API_URL_BASE}/users?uid=${googleUser.uid}`);
       let users = response.data.data || response.data.user || response.data;
 
       if (users && !Array.isArray(users) && typeof users === 'object') {
@@ -124,7 +125,7 @@ const Login = () => {
       params.append('password', Math.random().toString(36).slice(-8));
       params.append('role', role);
       
-      const createResponse = await axios.post('https://zhalalov2.su/school/users', params);
+      const createResponse = await axios.post(`${API_URL_BASE}/users`, params);
       let userInfo = createResponse.data.data || createResponse.data.user || createResponse.data;
       
       if (Array.isArray(userInfo)) {

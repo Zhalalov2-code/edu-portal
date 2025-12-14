@@ -13,8 +13,9 @@ import Results from './pages/Results';
 import { AuthProvider, useAuth } from './utils/authContext';
 import './css/App.css';
 import Profile from './pages/profile';
-import Chat from './pages/chat';
+import ChatSupport from './pages/chat_support';
 import AdminPanel from './pages/AdminPanel';
+import ChatUsers from './pages/chat_user';
 
 function AppInner() {
   const { user, isLoading, login, logout } = useAuth();
@@ -67,9 +68,15 @@ function AppInner() {
           element={<CourseList user={user} />}
         />
         <Route
-          path="/chat"
+          path="/chat_support"
           element={
-            user ? <Chat /> : <Navigate to="/login" />
+            user ? <ChatSupport /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          path="/chat_users"
+          element={
+            user ? <ChatUsers /> : <Navigate to="/login" />
           }
         />
 

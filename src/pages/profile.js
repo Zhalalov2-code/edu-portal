@@ -3,6 +3,7 @@ import "../css/profile.css";
 import { useState } from "react";
 import ModalEditProfile from "../components/profile/modalEditProfile";
 import axios from "axios";
+import { API_URL_BASE } from "../utils/API_URL_CONF.js";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../utils/firebaseConfig.js";
 
@@ -38,7 +39,7 @@ function Profile() {
 
             const res = await axios({
                 method: 'POST',
-                url: 'https://zhalalov2.su/school/update',
+                url: `${API_URL_BASE}/update`,
                 data: data,
                 headers: headers
             })
@@ -76,7 +77,7 @@ function Profile() {
                 }
                 
                 console.log('Отправка DELETE запроса на бэкенд для user.id:', user.id);
-                const deleteResponse = await axios.delete(`https://zhalalov2.su/school/users/${user.id}`);
+                const deleteResponse = await axios.delete(`${API_URL_BASE}/users/${user.id}`);
                 console.log('Ответ от бэкенда:', deleteResponse.status, deleteResponse.data);
                 
                 const firebaseUser = auth.currentUser;
@@ -117,7 +118,7 @@ function Profile() {
         <div className="foto-section">
             <div className="user-avatar-profile">
                 {user.avatar ? (
-                    <img src={`https://zhalalov2.su/school/uploads/${user.avatar}`} alt="Avatar" className="user-avatar" />
+                    <img src={`${API_URL_BASE}/uploads/${user.avatar}`} alt="Avatar" className="user-avatar" />
                 ) : (
                     <div className="user-avatar-placeholder">
                         {user.name ? user.name.substring(0, 2).toUpperCase() : '?'}

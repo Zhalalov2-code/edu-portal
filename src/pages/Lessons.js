@@ -4,17 +4,18 @@ import CreateLessonModal from '../components/Lessons/CreateLessonModal';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../utils/authContext';
 import '../css/Lessons.css';
+import { API_URL_BASE } from '../utils/API_URL_CONF';
 
 const Lessons = () => {
     const [lessons, setLessons] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const API_COURSES_URL = 'https://zhalalov2.su/school/courses';
-    const API_LESSONS_URL = 'https://zhalalov2.su/school/lessons';
+    const API_COURSES_URL = `${API_URL_BASE}/courses`;
+    const API_LESSONS_URL = `${API_URL_BASE}/lessons`;
     const [courses, setCourses] = useState([]);
     const { user } = useAuth();
     const userId = user?.id != null ? String(user.id) : null;
-    const API_ENROLLMENTS_URL = 'https://zhalalov2.su/school/course_enrollments';
-    const API_LESSON_PROGRESS_URL = 'https://zhalalov2.su/school/lesson_progress';
+    const API_ENROLLMENTS_URL = `${API_URL_BASE}/course_enrollments`;
+    const API_LESSON_PROGRESS_URL = `${API_URL_BASE}/lesson_progress`;
     const [enrolledCourseIds, setEnrolledCourseIds] = useState(new Set());
     const [completedLessonIds, setCompletedLessonIds] = useState(new Set());
 
@@ -117,7 +118,7 @@ const Lessons = () => {
             setEnrolledCourseIds(new Set());
             return new Set();
         }
-    }, [userId]);
+    }, [userId, API_ENROLLMENTS_URL]);
 
     const fetchLessonProgress = useCallback(async () => {
         if (!userId) {
