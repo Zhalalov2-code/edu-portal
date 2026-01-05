@@ -33,13 +33,19 @@ const ChatUsers = () => {
         if (!user?.id) return;
         try {
             const response = await axios.get(`${API_URL_BASE}/chats?id_user1=${user.id}&id_user2=${user.id}`);
+            console.log('📥 Получены чаты:', response.data);
             if (response.status === 200) {
                 let chatsData = Array.isArray(response.data) ? response.data :
+                    (response.data?.data && Array.isArray(response.data.data)) ? response.data.data :
                     Object.values(response.data).find(Array.isArray) || [];
-                setAllChats(chatsData.filter(chat => String(chat.id_user1) === String(user.id) || String(chat.id_user2) === String(user.id)));
+                console.log('📊 Обработанные чаты:', chatsData);
+                const filteredChats = chatsData.filter(chat => String(chat.id_user1) === String(user.id) || String(chat.id_user2) === String(user.id));
+                console.log('✅ Отфильтрованные чаты:', filteredChats);
+                setAllChats(filteredChats);
             }
         } catch (error) {
             console.error("❌ Ошибка при получении чатов:", error);
+            setAllChats([]);
         }
     }, [user]);
 
@@ -93,9 +99,11 @@ const ChatUsers = () => {
     }, [selectedChat, user]);
 
     useEffect(() => {
+        console.log('🔄 Инициализация ChatUsers, user:', user);
+        console.log('🔄 API_URL_BASE:', API_URL_BASE);
         getAllUsers();
         getAllChat();
-    }, [getAllUsers, getAllChat]);
+    }, [getAllUsers, getAllChat, user]);
 
     useEffect(() => {
         if (!selectedChat) return;
@@ -171,19 +179,26 @@ const ChatUsers = () => {
                                 </button>
                             </div>
                             <div className="chat-users-list">
-                                {allChats.map((chat) => {
-                                    const isUser1 = String(chat.id_user1) === String(user.id);
-                                    const chatPartnerName = isUser1 ? chat.name_user2 : chat.name_user1;
-                                    return (
-                                        <div key={chat.id_chat} onClick={() => setSelectedChatId(chat.id_chat)}
-                                            className={`chat-user-item ${chat.id_chat === selectedChatId ? "active" : ""}`}>
-                                            <div className="chat-user-avatar">{chatPartnerName?.slice(0, 1) || "?"}</div>
-                                            <div className="chat-user-meta">
-                                                <span className="chat-user-title">{chatPartnerName || "Неизвестный"}</span>
+                                {allChats && allChats.length > 0 ? (
+                                    allChats.map((chat) => {
+                                        const isUser1 = String(chat.id_user1) === String(user.id);
+                                        const chatPartnerName = isUser1 ? chat.name_user2 : chat.name_user1;
+                                        return (
+                                            <div key={chat.id_chat} onClick={() => setSelectedChatId(chat.id_chat)}
+                                                className={`chat-user-item ${chat.id_chat === selectedChatId ? "active" : ""}`}>
+                                                <div className="chat-user-avatar">{chatPartnerName?.slice(0, 1) || "?"}</div>
+                                                <div className="chat-user-meta">
+                                                    <span className="chat-user-title">{chatPartnerName || "Неизвестный"}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })
+                                ) : (
+                                    <div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
+                                        <p>Нет активных чатов</p>
+                                        <small>Создайте новый чат, нажав "➕ Новый чат"</small>
+                                    </div>
+                                )}
                             </div>
                         </aside>
 
