@@ -38,9 +38,7 @@ const ChatUsers = () => {
                 let chatsData = Array.isArray(response.data) ? response.data :
                     (response.data?.data && Array.isArray(response.data.data)) ? response.data.data :
                     Object.values(response.data).find(Array.isArray) || [];
-                console.log('📊 Обработанные чаты:', chatsData);
                 const filteredChats = chatsData.filter(chat => String(chat.id_user1) === String(user.id) || String(chat.id_user2) === String(user.id));
-                console.log('✅ Отфильтрованные чаты:', filteredChats);
                 setAllChats(filteredChats);
             }
         } catch (error) {
@@ -99,11 +97,9 @@ const ChatUsers = () => {
     }, [selectedChat, user]);
 
     useEffect(() => {
-        console.log('🔄 Инициализация ChatUsers, user:', user);
-        console.log('🔄 API_URL_BASE:', API_URL_BASE);
         getAllUsers();
         getAllChat();
-    }, [getAllUsers, getAllChat, user]);
+    }, [getAllUsers, getAllChat]);
 
     useEffect(() => {
         if (!selectedChat) return;
