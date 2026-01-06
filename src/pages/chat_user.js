@@ -114,15 +114,24 @@ const ChatUsers = () => {
 
     const createNewChat = async (userId) => {
         try {
-            const response = await axios.post(`${API_URL_BASE}/chats`, {
-                id_user1: user.id,
-                id_user2: userId
-            });
+            const body = new URLSearchParams();
+            body.append("id_user1", user.id);
+            body.append("id_user2", userId);
+            body.append('name_user1', user.name || 'Пользователь');
+            body.append('name_user2', allUsers.find(u => String(u.id) === String(userId))?.name || 'Пользователь');
+            
+            const response = await axios.post(`${API_URL_BASE}/chats`, body);
+
+            if (response.data?.status && ![200, 201].includes(response.data.status)) {
+                return;
+            }
 
             if (response.status === 200 || response.status === 201) {
                 setShowNewChatModal(false);
                 await getAllChat();
+                
                 const newChatId = response.data?.data?.id_chat || response.data?.id_chat;
+                
                 if (newChatId) {
                     setSelectedChatId(newChatId);
                 }
