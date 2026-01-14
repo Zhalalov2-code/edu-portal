@@ -309,6 +309,88 @@
 	background: #f8fafc;
 }
 
+.uc-chat-page .modal-user-item-checkbox {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 14px 24px;
+	cursor: pointer;
+	transition: background 0.15s ease;
+}
+
+.uc-chat-page .modal-user-item-checkbox:hover {
+	background: #f8fafc;
+}
+
+.uc-chat-page .group-chat-checkbox {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+	accent-color: #6366f1;
+}
+
+.uc-chat-page .modal-footer {
+	padding: 16px 24px;
+	border-top: 1px solid #eef2f7;
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
+	background: #f9fbff;
+}
+
+.uc-chat-page .cancel-btn {
+	border: 1px solid #e2e8f0;
+	background: #fff;
+	color: #0f172a;
+	padding: 10px 24px;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 600;
+	transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.uc-chat-page .cancel-btn:hover {
+	background: #f1f5f9;
+	border-color: #cbd5e1;
+}
+
+.uc-chat-page .create-group-btn {
+	border: none;
+	background: #6366f1;
+	color: #fff;
+	padding: 10px 24px;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 600;
+	transition: background 0.15s ease;
+}
+
+.uc-chat-page .create-group-btn:hover:not(:disabled) {
+	background: #4f46e5;
+}
+
+.uc-chat-page .create-group-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.uc-chat-page .modal-group-name {
+	padding-left: 25px;
+	padding-top: 10px;
+}
+
+.uc-chat-page .modal-group-name input {
+	border: 1px solid #e2e8f0;
+	border-radius: 10px;
+	padding: 10px 12px;
+	margin-top: 5px;
+	font-size: 14px;
+	background: #fff;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
 .uc-chat-page .modal-user-avatar {
 	width: 44px;
 	height: 44px;
