@@ -391,6 +391,12 @@
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.uc-chat-page .dropdown-btn {
+	position: absolute;
+	left: 180px;
+	top: -35px;
+}
+
 .uc-chat-page .modal-user-avatar {
 	width: 44px;
 	height: 44px;

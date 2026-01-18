@@ -1,320 +1,156 @@
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_URL_BASE } from '../../utils/API_URL_CONF';
 import '../../css/Header.css';
 
-const Header = ({ user, onLogout}) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isChatDropdownOpen, setIsChatDropdownOpen] = useState(false);
+const Header = ({ user, onLogout }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Мобильное меню
+  const [isChatDropdownOpen, setIsChatDropdownOpen] = useState(false); // Дропдаун чатов
+  const [isProfileOpen, setIsProfileOpen] = useState(false); // Дропдаун профиля
+
   const navigate = useNavigate();
+
+  // Закрытие всех меню при клике вне их области
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.user-dropdown') && !event.target.closest('.chats-dropdown-container')) {
+        setIsChatDropdownOpen(false);
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     onLogout();
     navigate('/login');
     setIsMenuOpen(false);
+    setIsProfileOpen(false);
   };
 
   return (
-    <header className="header">
-      <div className="container">
-        <div className="header-content">
-          {/* Логотип */}
-          <Link to="/" className="logo">
-            <div className="logo-icon">🎓</div>
-            <span className="logo-text">EduPortal</span>
-          </Link>
-
-          {/* Навигация для десктопа */}
-          <nav className="nav-desktop">
-            <Link to="/courses" className="nav-link">
-              Курсы
+      <header className="header">
+        <div className="container">
+          <div className="header-content">
+            {/* Логотип */}
+            <Link to="/" className="logo" onClick={() => setIsMenuOpen(false)}>
+              <div className="logo-icon">🎓</div>
+              <span className="logo-text">EduPortal</span>
             </Link>
-            {user && (
-              <>
-                <Link to="/test" className="nav-link">
-                  Тесты
-                </Link>
-                <Link to="/lessons" className="nav-link">
-                  Уроки
-                </Link>
-              </>
-            )}
-            {user && (
-              <>
-                {user.role === 'Admin' && (
-                  <Link to="/admin" className="nav-link">
-                    Чат поддержки
-                  </Link>
-                )}
-                {user.role === 'Teacher' && (
-                  <Link to="/teacher/dashboard" className="nav-link">
-                    Панель преподавателя
-                  </Link>
-                )}
-                <Link to="/results" className="nav-link">
-                  Результаты
-                </Link>
-                <Link to="/profile" className="nav-link">
-                  Профиль
-                </Link>
-                {user.role !== 'Admin' && (
-                  <div style={{ position: 'relative', display: 'inline-block' }}>
-                    <button 
-                      className="nav-link" 
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0', font: 'inherit' }}
-                      onClick={() => setIsChatDropdownOpen(!isChatDropdownOpen)}
-                    >
-                      Чаты
-                      <svg style={{ width: '16px', height: '16px', marginLeft: '4px', display: 'inline-block', verticalAlign: 'middle' }} viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                    {isChatDropdownOpen && (
-                      <div className="dropdown-menu" style={{ position: 'absolute', top: '100%', left: '0', marginTop: '8px', minWidth: '220px' }}>
-                        <Link
-                          to="/chat_support"
-                          className="dropdown-item"
-                          onClick={() => setIsChatDropdownOpen(false)}
-                        >
-                          <svg className="dropdown-item-icon" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
-                          </svg>
-                          Чат с поддержкой
-                        </Link>
-                        <Link
-                          to="/chat_users"
-                          className="dropdown-item"
-                          onClick={() => setIsChatDropdownOpen(false)}
-                        >
-                          <svg className="dropdown-item-icon" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                          </svg>
-                          Чат с пользователями
-                        </Link>
-                      </div>
+
+            {/* Навигация для десктопа */}
+            <nav className="nav-desktop">
+              <Link to="/courses" className="nav-link">Курсы</Link>
+              {user && (
+                  <>
+                    <Link to="/test" className="nav-link">Тесты</Link>
+                    <Link to="/lessons" className="nav-link">Уроки</Link>
+                    <Link to="/results" className="nav-link">Результаты</Link>
+
+                    {user.role === 'Teacher' && (
+                        <Link to="/teacher/dashboard" className="nav-link">Панель преподавателя</Link>
                     )}
-                  </div>
-                )}
-              </>
-            )}
-          </nav>
-
-          <div className="user-menu">
-            {user ? (
-              <div className="user-dropdown">
-                <button
-                  className="user-button"
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                >
-                  <div className="user-avatar-container-header">
-                    {user.avatar ? (
-                      <img src={`${API_URL_BASE}/uploads/${user.avatar}`} alt="Avatar" className="user-avatar-header" />
-                    ) : (
-                      user.name ? user.name.charAt(0).toUpperCase() : '?'
-                    )}
-                  </div>
-                  <span className="user-name">{user.name || 'Пользователь'}</span>
-                  <svg className="dropdown-icon" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </button>
-
-                {isMenuOpen && (
-                  <div className="dropdown-menu">
-                    <Link
-                      to="/profile"
-                      className="dropdown-item"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <svg className="dropdown-item-icon" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                      </svg>
-                      Мой профиль
-                    </Link>
-
-                    <Link
-                      to="/results"
-                      className="dropdown-item"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <svg className="dropdown-item-icon" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M2 11a1 1 0 011-1h3.586l1.707-1.707a1 1 0 011.414 0L11.414 10H17a1 1 0 010 2h-6a1 1 0 01-.707-.293L8 10.414 6.414 12H3a1 1 0 01-1-1z" />
-                        <path d="M3 5a1 1 0 011-1h12a1 1 0 011 1v11a1 1 0 01-1 1H4a1 1 0 01-1-1V5zm2 1v9h10V6H5z" />
-                      </svg>
-                      Мои результаты
-                    </Link>
-
                     {user.role === 'Admin' && (
-                      <Link
-                        to="/admin"
-                        className="dropdown-item"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <svg className="dropdown-item-icon" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
-                        </svg>
-                        Панель администратора
-                      </Link>
+                        <Link to="/admin" className="nav-link" onClick={() => setIsProfileOpen(false)}>Чат поддержки</Link>
                     )}
 
-                    {user.role === 'teacher' && (
-                      <Link
-                        to="/teacher/dashboard"
-                        className="dropdown-item"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <svg className="dropdown-item-icon" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                        </svg>
-                        Панель преподавателя
-                      </Link>
+                    {/* Дропдаун ЧАТЫ */}
+                    {user.role !== 'Admin' && (
+                        <div className="chats-dropdown-container" style={{ position: 'relative', display: 'inline-block' }}>
+                          <button
+                              className={`nav-link dropdown-toggle-custom ${isChatDropdownOpen ? 'active' : ''}`}
+                              onClick={() => setIsChatDropdownOpen(!isChatDropdownOpen)}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                          >
+                            Чаты
+                            <svg className={`chevron-icon ${isChatDropdownOpen ? 'rotate' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                            </svg>
+                          </button>
+
+                          {isChatDropdownOpen && (
+                              <div className="dropdown-menu show shadow" style={{ position: 'absolute', top: '100%', left: 0, display: 'block', zIndex: 1000 }}>
+                                <Link to="/chat_support" className="dropdown-item" onClick={() => setIsChatDropdownOpen(false)}>
+                                  💬 Чат с поддержкой
+                                </Link>
+                                <Link to="/chat_users" className="dropdown-item" onClick={() => setIsChatDropdownOpen(false)}>
+                                  👥 Чат с пользователями
+                                </Link>
+                              </div>
+                          )}
+                        </div>
                     )}
+                  </>
+              )}
+            </nav>
 
-                    <div className="dropdown-divider"></div>
-
-                    <button
-                      className="dropdown-item dropdown-item-danger"
-                      onClick={handleLogout}
-                    >
-                      <svg className="dropdown-item-icon" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
-                      </svg>
-                      Выйти
+            {/* Правая часть: Профиль или Войти */}
+            <div className="user-menu">
+              {user ? (
+                  <div className="user-dropdown" style={{ position: 'relative' }}>
+                    <button className="user-button" onClick={() => setIsProfileOpen(!isProfileOpen)}>
+                      <div className="user-avatar-container-header">
+                        {user.avatar ? (
+                            <img src={`${API_URL_BASE}/uploads/${user.avatar}`} alt="Avatar" className="user-avatar-header" />
+                        ) : (
+                            user.name ? user.name.charAt(0).toUpperCase() : '?'
+                        )}
+                      </div>
+                      <span className="user-name">{user.name || 'Пользователь'}</span>
                     </button>
+
+                    {isProfileOpen && (
+                        <div className="dropdown-menu show shadow" style={{ position: 'absolute', right: 0, top: '100%', display: 'block', zIndex: 1000 }}>
+                          <Link to="/profile" className="dropdown-item" onClick={() => setIsProfileOpen(false)}>👤 Профиль</Link>
+                          <Link to="/results" className="dropdown-item" onClick={() => setIsProfileOpen(false)}>📊 Результаты</Link>
+
+                          <div className="dropdown-divider"></div>
+                          <button className="dropdown-item dropdown-item-danger" onClick={handleLogout}>
+                            🚪 Выйти
+                          </button>
+                        </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ) : (
-              <div className="auth-buttons">
-                <Link to="/login" className="btn btn-outline btn-sm">
-                  Войти
-                </Link>
-                <Link to="/register" className="btn btn-primary btn-sm">
-                  Регистрация
-                </Link>
-              </div>
-            )}
+              ) : (
+                  <div className="auth-buttons">
+                    <Link to="/login" className="btn btn-outline btn-sm">Войти</Link>
+                    <Link to="/register" className="btn btn-primary btn-sm">Регистрация</Link>
+                  </div>
+              )}
+
+              {/* Бургер для мобилки */}
+              <button className="mobile-menu-button" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                <svg viewBox="0 0 20 20" fill="currentColor" style={{ width: '24px' }}>
+                  <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
           </div>
 
           {/* Мобильное меню */}
-          <button
-            className="mobile-menu-button"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <svg viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Мобильная навигация */}
-        {isMenuOpen && (
-          <div className="mobile-nav">
-            <Link
-              to="/courses"
-              className="mobile-nav-link"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Курсы
-            </Link>
-            {user && (
-              <>
-                <Link
-                  to="/lessons"
-                  className="mobile-nav-link"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Уроки
-                </Link>
-                <Link
-                  to="/test"
-                  className="mobile-nav-link"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Тесты
-                </Link>
-                <Link
-                  to="/chat_support"
-                  className="mobile-nav-link"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Чат поддержки
-                </Link>
-              </>
-            )}
-
-            {user ? (
-              <>
-                {user.role === 'Admin' && (
-                  <Link
-                    to="/admin"
-                    className="mobile-nav-link"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Панель администратора
-                  </Link>
+          {isMenuOpen && (
+              <div className="mobile-nav shadow-lg">
+                <Link to="/courses" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Курсы</Link>
+                {user && (
+                    <>
+                      <Link to="/lessons" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Уроки</Link>
+                      <Link to="/test" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Тесты</Link>
+                      <Link to="/chat_support" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Чат поддержки</Link>
+                      <Link to="/chat_users" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Чат пользователей</Link>
+                      <button className="mobile-nav-link text-danger" onClick={handleLogout}>Выйти</button>
+                    </>
                 )}
-                {user.role === 'teacher' && (
-                  <Link
-                    to="/teacher/dashboard"
-                    className="mobile-nav-link"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Панель преподавателя
-                  </Link>
+                {!user && (
+                    <div className="mobile-auth-buttons p-3">
+                      <Link to="/login" className="btn btn-outline w-100 mb-2" onClick={() => setIsMenuOpen(false)}>Войти</Link>
+                      <Link to="/register" className="btn btn-primary w-100" onClick={() => setIsMenuOpen(false)}>Регистрация</Link>
+                    </div>
                 )}
-                <Link
-                  to="/results"
-                  className="mobile-nav-link"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Мои результаты
-                </Link>
-                <Link
-                  to="/profile"
-                  className="mobile-nav-link"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Профиль
-                </Link>
-                {user.role !== 'Admin' && (
-                  <Link
-                    to="/chat_support"
-                    className="mobile-nav-link"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Чат поддержки
-                  </Link>
-                )}
-                <button
-                  className="mobile-nav-link mobile-nav-logout"
-                  onClick={handleLogout}
-                >
-                  Выйти
-                </button>
-              </>
-            ) : (
-              <div className="mobile-auth-buttons">
-                <Link
-                  to="/login"
-                  className="btn btn-outline"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Войти
-                </Link>
-                <Link
-                  to="/register"
-                  className="btn btn-primary"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Регистрация
-                </Link>
               </div>
-            )}
-          </div>
-        )}
-      </div>
-    </header>
+          )}
+        </div>
+      </header>
   );
 };
 
