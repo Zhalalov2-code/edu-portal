@@ -1,93 +1,151 @@
 .profile-container {
-    max-width: 600px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
+    padding: 40px 20px;
+}
+
+.profile-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 40px;
     display: flex;
-    flex-direction: column;
+    gap: 40px;
+    align-items: flex-start;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .foto-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
+    gap: 20px;
+    flex-shrink: 0;
 }
 
 .user-avatar-profile {
     object-fit: cover;
-    margin-bottom: 20px;
     font-size: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 10.5rem;
-    height: 10.5rem;
-    color: white;
-}
-
-.user-avatar{
     width: 150px;
     height: 150px;
-    border-radius: 20%;
+    color: white;
+}
+
+.user-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
     object-fit: cover;
-}
-
-.profile-info{
-    width: 100%;
-    text-align: left;
-}
-
-.profile-title{
-    text-align: left;
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-.profile-action{
-    margin-bottom: 20px;
-}
-
-.delete-profile-button {
-    padding: 10px 20px;
-    background-color: red;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 10px;
-}
-
-.edit-profile-button {
-    margin-bottom: 20px;
-    padding: 10px 20px;
-    background-color: white;
-    color: black;
-    border: solid 1px;
-    border-color: gray;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-
-}
-
-.edit-profile-button:hover {
-    background-color: var(--primary-hover);
-    color: white;
+    border: 4px solid white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .user-avatar-placeholder {
     width: 150px;
     height: 150px;
-    border-radius: 20%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 64px;
+    font-size: 60px;
     font-weight: bold;
+    border: 4px solid white;
+}
+
+.profile-info {
+    flex: 1;
+    color: white;
+}
+
+.profile-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: white;
+}
+
+.profile-info p {
+    font-size: 16px;
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.profile-info p b {
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.edit-profile-button {
+    padding: 12px 28px;
+    background-color: white;
+    color: #667eea;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.edit-profile-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.delete-profile-section {
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid #e6e6e6;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 20px;
+}
+
+.delete-profile-button {
+    padding: 12px 28px;
+    background-color: #ff4757;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.delete-profile-button:hover {
+    background-color: #ff3838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+}
+
+/* Styles for news section */
+.profile-news-section {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.profile-news-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #667eea;
+    display: inline-block;
+}
+
+.profile-news-empty {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+    border-radius: 12px;
+    color: #999;
+    font-size: 16px;
 }

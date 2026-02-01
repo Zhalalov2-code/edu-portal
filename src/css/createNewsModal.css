@@ -1,0 +1,106 @@
+.modal-overlay-news {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-container-news {
+    width: 600px;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 20px;
+}
+
+.modal-header-news {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header-news h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+.btnClose {
+    width: 25px;
+    border-radius: 100%;
+    background-color: silver;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.btnClose:hover {
+    background-color: gray;
+}
+
+.modal-content-news {
+    padding: 1rem;
+}
+
+.label-news {
+    margin-bottom: 10px;
+}
+
+.file-news {
+    padding: 1rem;
+}
+
+.btn-file {
+    width: 500px;
+    border-radius: 10px;
+    border: 1px solid silver;
+}
+
+.text-direction {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid silver;
+}
+
+.current-image-info {
+    padding: 10px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.current-image-info p {
+    margin: 0;
+}
+
+.modal-footer-news {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding-top: 10px;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}

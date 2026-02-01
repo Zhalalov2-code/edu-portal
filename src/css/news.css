@@ -1,0 +1,21 @@
+.news-container {
+    padding-left: 150px;
+    padding-right: 150px;
+    padding-top:  1px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.header-news {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.content-news {
+    padding: 0 30px 30px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}

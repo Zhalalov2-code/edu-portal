@@ -1,0 +1,387 @@
+.news-empty {
+    padding: 24px;
+    border: 1px dashed #c7c7c7;
+    border-radius: 12px;
+    color: #666;
+    text-align: center;
+}
+
+.news-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 10px;
+    height: auto;
+}
+
+.news-feed-item {
+    border: 1px solid #dbdbdb;
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 16px;
+}
+
+/* Левая часть - 30% */
+.news-feed-left {
+    flex: 0 0 40%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Правая часть - 70% */
+.news-feed-right {
+    flex: 0 0 60%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header с аватаром */
+.news-feed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+}
+
+.news-feed-user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.news-feed-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.news-feed-username {
+    display: flex;
+    flex-direction: column;
+}
+
+.username {
+    font-weight: 600;
+    font-size: 14px;
+    color: #262626;
+}
+
+.post-date {
+    font-size: 11px;
+    color: #8e8e8e;
+}
+
+.news-feed-options {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    color: #262626;
+    position: relative;
+}
+
+/* Dropdown menu */
+.dropdown-delete-news {
+    position: relative;
+}
+
+.dropdown-menu-delete-news {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #dbdbdb;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 200px;
+    padding: 8px 0;
+    margin-top: 4px;
+    list-style: none;
+    display: none;
+    z-index: 1000;
+}
+
+.dropdown-menu-delete-news.show {
+    display: block;
+}
+
+.dropdown-menu-delete-news li {
+    padding: 0;
+}
+
+.dropdown-item-delete-news {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: #262626;
+    transition: background 0.2s;
+}
+
+.dropdown-item-delete-news:hover {
+    background: #f5f5f5;
+}
+
+.dropdown-delete-news {
+    position: relative;
+}
+
+.dropdown-menu-delete-comment {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #dbdbdb;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 150px;
+    padding: 8px 0;
+    margin-top: 4px;
+    list-style: none;
+    display: none;
+    z-index: 1000;
+}
+
+.dropdown-menu-delete-comment.show {
+    display: block;
+}
+
+.dropdown-menu-delete-comment li {
+    padding: 0;
+}
+
+.dropdown-item-delete-comment {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: #262626;
+    transition: background 0.2s;
+}
+
+.dropdown-item-delete-comment:hover {
+    background: #f5f5f5;
+}
+
+.dropdown-delete-comment {
+    position: relative;
+}
+
+/* Изображение */
+.news-feed-media {
+    background: #000;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 350px;
+    min-height: 200px;
+    width: 100%;
+}
+
+.news-feed-image {
+    width: 100%;
+    max-height: 350px;
+    object-fit: contain;
+    display: block;
+}
+
+.news-feed-placeholder {
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    padding: 100px 20px;
+}
+
+/* Кнопки действий */
+.news-feed-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+}
+
+.news-feed-comments {
+    width: 100%;
+    height: 130px;
+    border: solid 1px black;
+}
+
+@keyframes likeAnimation {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+}
+
+/* Тело поста */
+.news-feed-body {
+    padding: 0 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.news-feed-likes {
+    font-weight: 600;
+    font-size: 14px;
+    color: #262626;
+}
+
+.news-feed-caption {
+    font-size: 14px;
+    color: #262626;
+    line-height: 1.4;
+}
+
+.caption-username {
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+.caption-text {
+    color: #262626;
+}
+
+.btn-comentary {
+    border: none;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-comentary:hover {
+    text-decoration: underline;
+}
+
+/* Секция комментариев */
+.news-feed-comments-section {
+    border: 1px solid #c7c7c7;
+    border-top: none;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: -16px;
+    background: #fff;
+}
+
+.comments-header {
+    margin: 0;
+}
+
+.comments-header h4 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #262626;
+}
+
+.comments-list {
+    max-height: 150px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.no-comments {
+    margin: 0;
+    font-size: 12px;
+    color: #8e8e8e;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.comment-item {
+    padding: 8px 0;
+    font-size: 13px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.comment-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #262626;
+    margin-right: 4px;
+}
+
+.comment-text {
+    color: #262626;
+    word-break: break-word;
+}
+
+.comment-date {
+    font-size: 11px;
+    color: #8e8e8e;
+}
+
+.comment-options {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0 4px;
+    color: #262626;
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* Ввод комментария */
+.comments-input {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.comment-input-field {
+    flex: 1;
+    border: 1px solid #dbdbdb;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 12px;
+    outline: none;
+}
+
+.comment-input-field:focus {
+    border-color: #0095f6;
+}
+
+.comment-submit-btn {
+    background: none;
+    border: none;
+    color: #0095f6;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.comment-submit-btn:hover {
+    color: #0077d4;
+}

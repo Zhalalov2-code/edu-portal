@@ -4,13 +4,12 @@ import { API_URL_BASE } from '../../utils/API_URL_CONF';
 import '../../css/Header.css';
 
 const Header = ({ user, onLogout }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // Мобильное меню
-  const [isChatDropdownOpen, setIsChatDropdownOpen] = useState(false); // Дропдаун чатов
-  const [isProfileOpen, setIsProfileOpen] = useState(false); // Дропдаун профиля
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isChatDropdownOpen, setIsChatDropdownOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const navigate = useNavigate();
 
-  // Закрытие всех меню при клике вне их области
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest('.user-dropdown') && !event.target.closest('.chats-dropdown-container')) {
@@ -33,13 +32,11 @@ const Header = ({ user, onLogout }) => {
       <header className="header">
         <div className="container">
           <div className="header-content">
-            {/* Логотип */}
             <Link to="/" className="logo" onClick={() => setIsMenuOpen(false)}>
               <div className="logo-icon">🎓</div>
               <span className="logo-text">EduPortal</span>
             </Link>
 
-            {/* Навигация для десктопа */}
             <nav className="nav-desktop">
               <Link to="/courses" className="nav-link">Курсы</Link>
               {user && (
@@ -47,6 +44,7 @@ const Header = ({ user, onLogout }) => {
                     <Link to="/test" className="nav-link">Тесты</Link>
                     <Link to="/lessons" className="nav-link">Уроки</Link>
                     <Link to="/results" className="nav-link">Результаты</Link>
+                    <Link to='/news' className='nav-link'>Новости</Link>
 
                     {user.role === 'Teacher' && (
                         <Link to="/teacher/dashboard" className="nav-link">Панель преподавателя</Link>
@@ -55,7 +53,6 @@ const Header = ({ user, onLogout }) => {
                         <Link to="/admin" className="nav-link" onClick={() => setIsProfileOpen(false)}>Чат поддержки</Link>
                     )}
 
-                    {/* Дропдаун ЧАТЫ */}
                     {user.role !== 'Admin' && (
                         <div className="chats-dropdown-container" style={{ position: 'relative', display: 'inline-block' }}>
                           <button
@@ -85,7 +82,6 @@ const Header = ({ user, onLogout }) => {
               )}
             </nav>
 
-            {/* Правая часть: Профиль или Войти */}
             <div className="user-menu">
               {user ? (
                   <div className="user-dropdown" style={{ position: 'relative' }}>
@@ -119,7 +115,6 @@ const Header = ({ user, onLogout }) => {
                   </div>
               )}
 
-              {/* Бургер для мобилки */}
               <button className="mobile-menu-button" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                 <svg viewBox="0 0 20 20" fill="currentColor" style={{ width: '24px' }}>
                   <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -128,7 +123,6 @@ const Header = ({ user, onLogout }) => {
             </div>
           </div>
 
-          {/* Мобильное меню */}
           {isMenuOpen && (
               <div className="mobile-nav shadow-lg">
                 <Link to="/courses" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Курсы</Link>

@@ -1,4 +1,3 @@
-import React from 'react';
 import '../css/modalDetailsChats.css';
 import {Trash2} from "lucide-react";
 
@@ -24,7 +23,6 @@ function ModalDetailsChats({isOpen, onClose, groupInfo, currentUserId, onRemoveU
             <div className="group-info-modal">
                 <div className="modal-header-details">
                     <h3>
-                        <span className="group-icon">👥</span>
                         {groupInfo.group_name || 'Группа'}
                     </h3>
                     <button className="close-modal-btn" onClick={onClose} aria-label="Закрыть">

@@ -1,13 +1,13 @@
-import {useState, useEffect, useCallback, useRef} from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import "../css/ChatUsers.css";
 import axios from "axios";
-import {API_URL_BASE} from "../utils/API_URL_CONF";
-import {useAuth} from "../utils/authContext";
-import {EllipsisVertical} from "lucide-react";
+import { API_URL_BASE } from "../utils/API_URL_CONF";
+import { useAuth } from "../utils/authContext";
+import { EllipsisVertical } from "lucide-react";
 import ModalDetailsChats from "../components/detailsChatsModal";
 
 const ChatUsers = () => {
-    const {user} = useAuth();
+    const { user } = useAuth();
     const [allUsers, setAllUsers] = useState([]);
     const [allChats, setAllChats] = useState([]);
     const [allGroupChats, setAllGroupChats] = useState([]);
@@ -78,7 +78,7 @@ const ChatUsers = () => {
                 setMessages(prev => prev.map(msg => msg.from === "other" && !msg.isRead ? {
                     ...msg,
                     isRead: true,
-                    readTime: new Date().toLocaleTimeString("ru-RU", {hour: "2-digit", minute: "2-digit"})
+                    readTime: new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })
                 } : msg));
             }
         } catch (error) {
@@ -141,7 +141,7 @@ const ChatUsers = () => {
         };
 
         syncChat()
-    }, [ selectedChatId, selectedChatCombined, getMessages, readMessage, user.id]);
+    }, [selectedChatId, selectedChatCombined, getMessages, readMessage, user.id]);
 
     const createNewChat = async (userId) => {
         try {
@@ -274,7 +274,7 @@ const ChatUsers = () => {
         const isGroup = !!chatToDelete.group_name;
         const chatId = chatToDelete.id_chat;
 
-        if(String(selectedChatId) === String(chatId) && isGroup) {
+        if (String(selectedChatId) === String(chatId) && isGroup) {
             setSelectedChatId(null);
             setMessages([]);
         }
@@ -295,7 +295,7 @@ const ChatUsers = () => {
                     await getAllChat();
                 }
             }
-        }catch (error) {
+        } catch (error) {
             console.error("❌ Ошибка при удалении чата:", error.response?.data || error.message);
             alert('Не удалось удалить чат. Проверьте консоль (F12)');
         }
@@ -306,18 +306,10 @@ const ChatUsers = () => {
     };
 
     const onRemoveUserFromGroup = async (groupId, userId) => {
-        // ЛОГ 1: Проверяем, что пришло в функцию
-        console.log("🚀 Попытка удаления юзера:", { groupId, userId });
 
         try {
-            // Формируем URL без лишних слов, как того ожидает твой PHP-код
             const url = `${API_URL_BASE}/group_chats/${groupId}/${userId}`;
-            console.log("🔗 Отправка DELETE на URL:", url);
-
             const response = await axios.delete(url);
-
-            // ЛОГ 2: Полный ответ сервера
-            console.log("✅ Ответ сервера:", response.data);
 
             if (response.status === 200 || response.status === 201) {
                 await getAllGroupChat();
@@ -330,13 +322,6 @@ const ChatUsers = () => {
                 alert('Пользователь успешно удален');
             }
         } catch (error) {
-            // ЛОГ 3: Если сервер вернул ошибку (400, 404, 500)
-            console.error("❌ Ошибка бэкенда:", {
-                status: error.response?.status,
-                data: error.response?.data,
-                message: error.message
-            });
-
             const errorMsg = error.response?.data?.message || 'Не удалось удалить пользователя';
             alert(`Ошибка: ${errorMsg}`);
         }
@@ -351,7 +336,7 @@ const ChatUsers = () => {
                         <div className="chat-user-details">
                             <h3 className="chat-user-name">Чаты</h3>
                             <p className="chat-user-role">
-                                {selectedChatCombined ? (selectedChatCombined.group_name ? `Группа: ${selectedChatCombined.group_name}` : "Диалог открыт") : "Выберите чат"}
+                                {selectedChatCombined ? (selectedChatCombined.group_name ? `Группа: ${selectedChatCombined.group_name}` : `Чат открыт`) : "Выберите чат"}
                             </p>
                         </div>
                     </div>
@@ -373,22 +358,22 @@ const ChatUsers = () => {
                                 if (chat.group_name) {
                                     return (
                                         <div key={chat.id_chat} onClick={() => setSelectedChatId(chat.id_chat)}
-                                             className={`chat-user-item ${chat.id_chat === selectedChatId ? "active" : ""}`}>
+                                            className={`chat-user-item ${chat.id_chat === selectedChatId ? "active" : ""}`}>
                                             <div className="chat-user-avatar">👥</div>
                                             <div className="chat-user-meta">
-                                                        <span
-                                                            className="chat-user-title">{chat.group_name || "Группа"}
-                                                            <div className="dropdown">
-                                                                <button className='btn dropdown-btn' type="button"
-                                                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <EllipsisVertical/>
-                                                                </button>
-                                                                <ul className="dropdown-menu">
-                                                                    <li className="dropdown-item" onClick={(e) => {e.stopPropagation(); deleteChat(chat)}}>Удалить</li>
-                                                                    <li className="dropdown-item" onClick={(e) => {e.stopPropagation(); openDetailsModal()}}>Подробнее</li>
-                                                                </ul>
-                                                            </div>
-                                                        </span>
+                                                <span
+                                                    className="chat-user-title">{chat.group_name || "Группа"}
+                                                    <div className="dropdown">
+                                                        <button className='btn dropdown-btn' type="button"
+                                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <EllipsisVertical />
+                                                        </button>
+                                                        <ul className="dropdown-menu">
+                                                            <li className="dropdown-item" onClick={(e) => { e.stopPropagation(); deleteChat(chat) }}>Удалить</li>
+                                                            <li className="dropdown-item" onClick={(e) => { e.stopPropagation(); openDetailsModal() }}>Подробнее</li>
+                                                        </ul>
+                                                    </div>
+                                                </span>
                                             </div>
                                         </div>);
                                 }
@@ -397,24 +382,24 @@ const ChatUsers = () => {
                                 const isUser1 = String(chat.id_user1) === String(user.id);
                                 const chatPartnerName = isUser1 ? chat.name_user2 : chat.name_user1;
                                 return (<div key={chat.id_chat} onClick={() => setSelectedChatId(chat.id_chat)}
-                                             className={`chat-user-item ${chat.id_chat === selectedChatId ? "active" : ""}`}>
+                                    className={`chat-user-item ${chat.id_chat === selectedChatId ? "active" : ""}`}>
                                     <div
                                         className="chat-user-avatar">{chatPartnerName?.slice(0, 1) || "?"}</div>
                                     <div className="chat-user-meta">
-                                                    <span
-                                                        className="chat-user-title">{chatPartnerName || "Неизвестный"}</span>
+                                        <span
+                                            className="chat-user-title">{chatPartnerName || "Неизвестный"}</span>
                                         <div className="dropdown" onClick={(e) => e.stopPropagation()}>
                                             <button className='btn dropdown-btn' type="button" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
-                                                <EllipsisVertical/>
+                                                aria-expanded="false">
+                                                <EllipsisVertical />
                                             </button>
                                             <ul className="dropdown-menu">
-                                                <li className="dropdown-item" onClick={(e) => {e.stopPropagation(); deleteChat(chat)}}>Удалить</li>
+                                                <li className="dropdown-item" onClick={(e) => { e.stopPropagation(); deleteChat(chat) }}>Удалить</li>
                                             </ul>
                                         </div>
                                     </div>
                                 </div>);
-                            })) : (<div style={{padding: '20px', textAlign: 'center', color: '#999'}}>
+                            })) : (<div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
                                 <p>Нет активных чатов</p>
                                 <small>Создайте новый чат, нажав "➕ Новый чат"</small>
                             </div>)}
@@ -424,7 +409,7 @@ const ChatUsers = () => {
                     <section className="chat-window">
                         <div className="chat-messages">
                             {messages.map((msg) => (<div key={msg.id}
-                                                         className={`message ${msg.from === "self" ? "user" : "support"}-message`}>
+                                className={`message ${msg.from === "self" ? "user" : "support"}-message`}>
                                 <div className="message-content">
                                     <div className="message-bubble">
                                         <p>{msg.text}</p>
@@ -449,16 +434,16 @@ const ChatUsers = () => {
                                         justifyContent: 'flex-end'
                                     }}>
                                         {msg.from === "self" && (<span className="read-status">
-                                                        {msg.isRead ? (<span title={`Просмотрено в ${msg.readTime}`}
-                                                                             style={{
-                                                                                 color: '#4fc3f7',
-                                                                                 fontSize: '12px'
-                                                                             }}>
-                                                                ✔✔ <small
-                                                            style={{fontSize: '10px'}}>{msg.readTime}</small>
-                                                            </span>) : (
-                                                            <span style={{color: '#ccc', fontSize: '12px'}}>✔</span>)}
-                                                    </span>)}
+                                            {msg.isRead ? (<span title={`Просмотрено в ${msg.readTime}`}
+                                                style={{
+                                                    color: '#4fc3f7',
+                                                    fontSize: '12px'
+                                                }}>
+                                                ✔✔ <small
+                                                    style={{ fontSize: '10px' }}>{msg.readTime}</small>
+                                            </span>) : (
+                                                <span style={{ color: '#ccc', fontSize: '12px' }}>✔</span>)}
+                                        </span>)}
                                     </div>
                                 </div>
                             </div>))}
@@ -466,11 +451,11 @@ const ChatUsers = () => {
 
                         <div className="chat-input-area">
                             <input type="text" value={message} onChange={(e) => setMessage(e.target.value)}
-                                   onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                                   placeholder="Введите сообщение..." className="chat-input"
-                                   disabled={!selectedChatCombined}/>
+                                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                                placeholder="Введите сообщение..." className="chat-input"
+                                disabled={!selectedChatCombined} />
                             <button className="send-btn" onClick={sendMessage}
-                                    disabled={!selectedChatCombined || !message.trim()}>➤
+                                disabled={!selectedChatCombined || !message.trim()}>➤
                             </button>
                         </div>
                     </section>
@@ -479,7 +464,7 @@ const ChatUsers = () => {
         </div>
 
         {showNewChatModal && (<>
-            <div className="modal-overlay" onClick={() => setShowNewChatModal(false)}/>
+            <div className="modal-overlay" onClick={() => setShowNewChatModal(false)} />
             <div className="new-chat-modal">
                 <div className="modal-header">
                     <h3>Выберите собеседника</h3>
@@ -501,7 +486,7 @@ const ChatUsers = () => {
             <div className="modal-overlay" onClick={() => {
                 setIsGroupChat(false);
                 setSelectedGroupUsers([]);
-            }}/>
+            }} />
             <div className="new-chat-modal">
                 <div className="modal-header">
                     <h3>Создать групповой чат</h3>
@@ -514,7 +499,7 @@ const ChatUsers = () => {
                 <div className='modal-group-name'>
                     <h3>Введите назваение группы</h3>
                     <input ref={groupName} type="text" className="group-name-input"
-                           placeholder="Название группы"/>
+                        placeholder="Название группы" />
                 </div>
                 <div className="modal-users-list">
                     {allUsers.map((u) => (<div
