@@ -1,8 +1,7 @@
 import { useAuth } from "../utils/authContext.js";
 import "../css/profile.css";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import ModalEditProfile from "../components/profile/modalEditProfile";
-import NewsCard from "../components/newsCard";
 import axios from "axios";
 import { API_URL_BASE } from "../utils/API_URL_CONF.js";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +10,6 @@ import { auth } from "../utils/firebaseConfig.js";
 function Profile() {
     const { user, setUser } = useAuth();
     const [isOpenModal, setIsOpenModal] = useState(false);
-    const [userNews, setUserNews] = useState([]);
     const navigate = useNavigate();
 
     const handleOpenModal = () => {
@@ -21,45 +19,6 @@ function Profile() {
     const handleCloseModal = () => {
         setIsOpenModal(false);
     }
-
-    const getNewsUser = useCallback(async () => {
-        try {
-            const response = await axios.get(`${API_URL_BASE}/news?id_user=${user.id}`);
-            if (response.status === 200 || response.status === 201) {
-                let all_news = [];
-                if (Array.isArray(response.data)) {
-                    all_news = response.data[2] || [];
-                } else if (response.data.data) {
-                    all_news = response.data.data;
-                } else {
-                    const value = Object.values(response.data);
-                    if (Array.isArray(value[2])) {
-                        all_news = value[2];
-                    } else if (Array.isArray(value[1])) {
-                        all_news = value[1];
-                    } else if (Array.isArray(value[0])) {
-                        all_news = value[0];
-                    } else {
-                        all_news = value;
-                    }
-                }
-                console.log('Новости пользователя:', all_news);
-                return all_news;
-            } else {
-                alert('Ошибка при получении новостей пользователя');
-                return [];
-            }
-        } catch (error) {
-            alert('Ошибка при получении новостей пользователя, срабатывает catch. Попробуйте еще раз.');
-            return [];
-        }
-    }, [user]);
-
-    useEffect(() => {
-        if (user) {
-            getNewsUser().then(news => setUserNews(news));
-        }
-    }, [user, getNewsUser])
 
     const handleSave = async (formData) => {
         try {
@@ -103,21 +62,6 @@ function Profile() {
         } catch (err) {
             console.error('Ошибка при обновлении профиля:', err);
             alert('Ошибка при обновлении профиля');
-        }
-    }
-
-    const deleteNews = async (id_news) => {
-        try {
-            const response = await axios.delete(`${API_URL_BASE}/news/${id_news}`);
-            if (!response.data.status || (response.data.status !== 201 && response.data.status !== 200)) {
-                alert(response.data.error || 'Не удалось удалить новость');
-                return;
-            }
-            alert('Новость успешно удалена');
-            setUserNews(prev => prev.filter(news => news.id_news !== id_news));
-        } catch (error) {
-            console.error('Error deleting news:', error);
-            alert('Ошибка при удалении новости. Попробуйте еще раз.');
         }
     }
 
@@ -202,16 +146,6 @@ function Profile() {
                 userData={user}
                 onSave={handleSave}
             />
-            <div className="profile-news-section">
-                <h2 className="profile-news-title">Мои контенты</h2>
-                {userNews && userNews.length > 0 ? (
-                    <NewsCard newsList={userNews} deleteNews={deleteNews} getNews={() => getNewsUser().then(news => setUserNews(news))} />
-                ) : (
-                    <div className="profile-news-empty">
-                        <p>У вас пока нет новостей. Перейдите на страницу новостей, чтобы создать свою первую новость!</p>
-                    </div>
-                )}
-            </div>
         </div>
     )
 }
