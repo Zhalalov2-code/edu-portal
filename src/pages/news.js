@@ -21,12 +21,20 @@ const News = () => {
         try {
             const response = await axios.get(`${API_URL_BASE}/news`);
             if (response.status === 200 || response.status === 201) {
+                if (typeof response.data === 'string') {
+                    const text = response.data.trim();
+                    if (text.startsWith('<') || text.includes('Fatal error') || text.includes('Warning')) {
+                        alert('Ошибка сервера! Проверьте:\n1. Существует ли таблица "news" в БД\n2. Логи PHP в консоли');
+                        return;
+                    }
+                }
+
                 let all_news = [];
                 if (Array.isArray(response.data)) {
                     all_news = response.data[2] || [];
-                } else if (response.data.data) {
+                } else if (response.data && response.data.data) {
                     all_news = response.data.data;
-                } else {
+                } else if (response.data && typeof response.data === 'object') {
                     const value = Object.values(response.data);
                     if (Array.isArray(value[2])) {
                         all_news = value[2];
@@ -37,6 +45,8 @@ const News = () => {
                     } else {
                         all_news = value;
                     }
+                } else {
+                    all_news = [];
                 }
                 setNewsList(all_news);
             } else {
@@ -56,6 +66,7 @@ const News = () => {
             let data, headers = {}
 
             if (formData.files instanceof File) {
+                console.log('[handlePostsNews] sending multipart/form-data');
                 data = new FormData();
                 data.append('text', formData.text || '');
                 data.append('files', formData.files);
@@ -92,6 +103,7 @@ const News = () => {
             setIsOpenModal(false)
             getNews();
         } catch (error) {
+            console.log('[handlePostsNews] error:', error);
             alert('Ошибка при отправке. Попробуйте еще раз.')
         }
     }

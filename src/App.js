@@ -17,6 +17,7 @@ import ChatSupport from './pages/chat_support';
 import AdminPanel from './pages/AdminPanel';
 import ChatUsers from './pages/chat_user';
 import News from "./pages/news";
+import DetailsNews from './pages/detailsNews';
 
 function AppInner() {
     const {user, isLoading, login, logout} = useAuth();
@@ -134,6 +135,7 @@ function AppInner() {
                         <Route path="/lessons" element={<Lessons/>}/>
                         <Route path="/results" element={<Results/>}/>
                         <Route path="/lessons/:id" element={<LessonDetail/>}/>
+                        <Route path="/detailsNews/:id" element={<DetailsNews />}/>
 
                         {/* 404 страница */}
                         <Route
