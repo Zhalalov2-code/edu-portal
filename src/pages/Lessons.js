@@ -5,10 +5,12 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../utils/authContext';
 import '../css/Lessons.css';
 import { API_URL_BASE } from '../utils/API_URL_CONF';
+import Spinner from '../components/Spinner';
 
 const Lessons = () => {
     const [lessons, setLessons] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const API_COURSES_URL = `${API_URL_BASE}/courses`;
     const API_LESSONS_URL = `${API_URL_BASE}/lessons`;
     const [courses, setCourses] = useState([]);
@@ -68,6 +70,7 @@ const Lessons = () => {
     };
 
     const getLessons = useCallback(async () => {
+        setIsLoading(true);
         try {
             const response = await axios.get(API_LESSONS_URL);
             if (response.status === 200) {
@@ -92,6 +95,8 @@ const Lessons = () => {
             }
         } catch (err) {
             setLessons([]);
+        } finally {
+            setIsLoading(false);
         }
     }, [API_LESSONS_URL, enrolledCourseIds, user]);
 
@@ -163,6 +168,10 @@ const Lessons = () => {
     useEffect(() => {
         getCourse();
     }, [getCourse]);
+
+    if (isLoading) {
+        return <Spinner fullScreen />;
+    }
 
     return (
         <div className="container lessons-page">

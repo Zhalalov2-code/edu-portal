@@ -5,6 +5,7 @@ import { API_URL_BASE } from "../utils/API_URL_CONF";
 import { useAuth } from "../utils/authContext";
 import "../css/TestDetail.css";
 import { ensureArrayOptions } from "../utils/options";
+import Spinner from "../components/Spinner";
 
 const API_TESTS_URL = `${API_URL_BASE}/tests`;
 const API_RESULTS_URL = `${API_URL_BASE}/results`;
@@ -185,6 +186,7 @@ const TestDetail = () => {
       return;
     }
     if (submitting) return;
+    setSubmitting(true);
 
     const ca = test.correct_answer;
     let ok = false;
@@ -240,8 +242,8 @@ const TestDetail = () => {
     }
   };
 
-  if (loading)
-    return <div className="container td-loading">Загрузка теста...</div>;
+  if (loading || submitting)
+    return <Spinner fullScreen />;
   if (!test) return <div className="container td-loading">Тест не найден</div>;
 
   return (

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { API_URL_BASE } from '../utils/API_URL_CONF';
 import { useAuth } from '../utils/authContext';
 import '../css/LessonDetail.css';
+import Spinner from '../components/Spinner';
 
 const LessonDetail = () => {
   const { id } = useParams();
@@ -126,7 +127,7 @@ const LessonDetail = () => {
     navigate('/test', { state: { lessonId: id } });
   };
 
-  if (loading) return <div className="container ld-loading">Загрузка...</div>;
+  if (loading) return <Spinner fullScreen />;
   if (!lesson) return <div className="container ld-loading">Урок не найден</div>;
 
   const contentHtml = lesson.content || '';

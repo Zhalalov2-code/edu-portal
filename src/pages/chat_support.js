@@ -3,6 +3,7 @@ import { useAuth } from '../utils/authContext';
 import axios from 'axios';
 import { API_URL_BASE } from '../utils/API_URL_CONF';
 import '../css/ChatSupport.css';
+import Spinner from '../components/Spinner';
 
 function ChatSupport() {
     const [message, setMessage] = useState('');
@@ -69,13 +70,7 @@ function ChatSupport() {
     };
 
     if (isLoading) {
-        return (
-            <div className="chat-container">
-                <div className="auth-message">
-                    <h3>Загрузка...</h3>
-                </div>
-            </div>
-        );
+        return <Spinner fullScreen />;
     }
 
     if (!currentUser) {

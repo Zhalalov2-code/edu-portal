@@ -5,6 +5,7 @@ import axios from 'axios';
 import { API_URL_BASE } from '../utils/API_URL_CONF';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../utils/firebaseConfig';
+import Spinner from '../components/Spinner';
 
 const Register = () => {
   const [user, setUser] = useState(
@@ -87,6 +88,10 @@ const Register = () => {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  if (isLoading) {
+    return <Spinner fullScreen />;
   }
 
   return (

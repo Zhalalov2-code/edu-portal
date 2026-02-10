@@ -4,6 +4,7 @@ import CourseCard from './CourseCard';
 import '../../css/Course.css';
 import { API_URL_BASE } from '../../utils/API_URL_CONF';
 import axios from 'axios';
+import Spinner from '../Spinner';
 
 const CourseList = ({ user }) => {
   const [courses, setCourses] = useState([]);
@@ -149,16 +150,7 @@ const CourseList = ({ user }) => {
   };
 
   if (isLoading) {
-    return (
-      <div className="courses-container">
-        <div className="container">
-          <div className="loading-state">
-            <div className="spinner-large"></div>
-            <p>Загружаем курсы...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <Spinner fullScreen />;
   }
 
   return (

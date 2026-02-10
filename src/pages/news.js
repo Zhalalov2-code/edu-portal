@@ -4,10 +4,12 @@ import CreatedNewsCard from '../components/createdNewsCard';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_URL_BASE } from '../utils/API_URL_CONF';
+import Spinner from '../components/Spinner';
 
 const News = () => {
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [newsList, setNewsList] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const handleOpenModal = () => {
         setIsOpenModal(true)
@@ -18,6 +20,7 @@ const News = () => {
     }
 
     const getNews = async () => {
+        setIsLoading(true);
         try {
             const response = await axios.get(`${API_URL_BASE}/news`);
             if (response.status === 200 || response.status === 201) {
@@ -54,6 +57,8 @@ const News = () => {
             }
         } catch (error) {
             alert('Ошибка при получении новостей, срабатывает catch. Попробуйте еще раз.')
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -121,6 +126,10 @@ const News = () => {
             console.error('Error deleting news:', error);
             alert('Ошибка при удалении новости. Попробуйте еще раз.')
         }
+    }
+
+    if (isLoading) {
+        return <Spinner fullScreen />;
     }
 
     return (

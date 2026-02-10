@@ -3,6 +3,7 @@ import '../css/DetailsNews.css';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL_BASE } from '../utils/API_URL_CONF';
+import Spinner from '../components/Spinner';
 
 const DetailsNews = () => {
     const { id } = useParams();
@@ -10,6 +11,7 @@ const DetailsNews = () => {
     const [comments, setComments] = useState([]);
     const [imageError, setImageError] = useState(false);
     const [responseReplys, setResponseReplys] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
 
     const formatDate = (dateString) => {
         if (!dateString) return '';
@@ -29,6 +31,7 @@ const DetailsNews = () => {
     };
 
     const getNewsDetials = useCallback(async () => {
+        setIsLoading(true);
         try {
             const response = await axios.get(`${API_URL_BASE}/news/${id}`);
             if (response.status === 200) {
@@ -57,6 +60,8 @@ const DetailsNews = () => {
         } catch (error) {
             console.error('Error fetching news details:', error);
             alert('Ошибка при загрузке новости. Пожалуйста, попробуйте позже.');
+        } finally {
+            setIsLoading(false);
         }
     }, [id]);
 
@@ -125,6 +130,10 @@ const DetailsNews = () => {
             }
         });
     }, [comments, getReplys]);
+
+    if (isLoading) {
+        return <Spinner fullScreen />;
+    }
 
     return (
         <div className='details-news'>

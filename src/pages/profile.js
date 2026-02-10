@@ -6,10 +6,12 @@ import axios from "axios";
 import { API_URL_BASE } from "../utils/API_URL_CONF.js";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../utils/firebaseConfig.js";
+import Spinner from "../components/Spinner";
 
 function Profile() {
     const { user, setUser } = useAuth();
     const [isOpenModal, setIsOpenModal] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleOpenModal = () => {
@@ -21,6 +23,7 @@ function Profile() {
     }
 
     const handleSave = async (formData) => {
+        setIsLoading(true);
         try {
             let data, headers = {};
 
@@ -62,6 +65,8 @@ function Profile() {
         } catch (err) {
             console.error('Ошибка при обновлении профиля:', err);
             alert('Ошибка при обновлении профиля');
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -111,6 +116,10 @@ function Profile() {
 
     if (!user) {
         return <div>Пожалуйста, войдите в систему, чтобы просмотреть ваш профиль.</div>
+    }
+
+    if (isLoading) {
+        return <Spinner fullScreen />;
     }
 
     return (

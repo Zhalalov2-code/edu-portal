@@ -26,7 +26,7 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
         const now = new Date();
         const diffTime = Math.abs(now - date);
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        
+
         if (diffDays === 0) {
             return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
         } else if (diffDays === 1) {
@@ -211,7 +211,7 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
     }
 
     const deleteReply = async (id_reply, id_cpmment) => {
-        try{
+        try {
             const response = await axios.delete(`${API_URL_BASE}/replies_to_comments?id_reply=${id_reply}`);
             if (!response.data.status || (response.data.status !== 201 && response.data.status !== 200)) {
                 alert(response.data.error || 'Не удалось удалить ответ');
@@ -295,44 +295,50 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
                                     <span className='post-date'>{formatDate(item.created_at)}</span>
                                 </div>
                             </div>
-                            {item.id_user === user?.id && (
-                                <div className='dropdown-delete-news'>
-                                    <button
-                                        className='news-feed-options'
-                                        onClick={() => setOpenDropdown(openDropdown === item.id_news ? null : item.id_news)}
-                                    >
-                                        ⋯
-                                    </button>
-                                    {openDropdown === item.id_news && (
-                                        <ul className='dropdown-menu-delete-news show'>
-                                            <li>
-                                                <button
-                                                    className='dropdown-item-delete-news'
-                                                    onClick={() => {
-                                                        deleteNews(item.id_news);
-                                                        setOpenDropdown(null);
-                                                    }}
-                                                >
-                                                    Удалить контент
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button
-                                                    className='dropdown-item-delete-news'
-                                                    onClick={() => handleOpenEditModal(item)}
-                                                >
-                                                    Редактировать контент
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <Link to={`/detailsNews/${item.id_news}`} className='dropdown-item-delete-news' onClick={() => setOpenDropdown(null)}>
-                                                    Подробнее о новости
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    )}
-                                </div>
-                            )}
+                            <div className='dropdown-delete-news'>
+                                <button
+                                    className='news-feed-options'
+                                    onClick={() => setOpenDropdown(openDropdown === item.id_news ? null : item.id_news)}
+                                >
+                                    ⋯
+                                </button>
+                                {openDropdown === item.id_news && (
+                                    <ul className='dropdown-menu-delete-news show'>
+                                        {item.id_user === user?.id && (
+                                            <>
+                                                <li>
+                                                    <button
+                                                        className='dropdown-item-delete-news'
+                                                        onClick={() => {
+                                                            deleteNews(item.id_news);
+                                                            setOpenDropdown(null);
+                                                        }}
+                                                    >
+                                                        Удалить контент
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button
+                                                        className='dropdown-item-delete-news'
+                                                        onClick={() => handleOpenEditModal(item)}
+                                                    >
+                                                        Редактировать контент
+                                                    </button>
+                                                </li>
+                                            </>
+                                        )}
+                                        <li>
+                                            <Link
+                                                to={`/detailsNews/${item.id_news}`}
+                                                className='dropdown-item-delete-news'
+                                                onClick={() => setOpenDropdown(null)}
+                                            >
+                                                Подробнее о новости
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                )}
+                            </div>
                         </div>
                         <article className='news-feed-item'>
                             <div className='news-feed-left'>

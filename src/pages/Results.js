@@ -5,6 +5,7 @@ import { API_URL_BASE } from '../utils/API_URL_CONF';
 import { useAuth } from '../utils/authContext';
 import { ensureArrayOptions } from '../utils/options';
 import '../css/Results.css';
+import Spinner from '../components/Spinner';
 
 const API_RESULTS_URL = `${API_URL_BASE}/results`;
 const API_TESTS_URL = `${API_URL_BASE}/tests`;
@@ -183,14 +184,15 @@ const Results = () => {
         );
     }
 
+    if (loading) {
+        return <Spinner fullScreen />;
+    }
+
     return (
         <div className="container results-page">
         <div className="result-card">
             <h1>Ваши результаты по тестам</h1>
 
-                    {loading ? (
-                        <div className="results-loading">Загрузка результатов...</div>
-                    ) : (
                         <div className="results-list">
                             {results.length === 0 ? (
                                 <div>
@@ -249,7 +251,6 @@ const Results = () => {
                                 </ul>
                             )}
                         </div>
-                    )}
                 </div>
             </div>
     );

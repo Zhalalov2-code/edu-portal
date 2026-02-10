@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL_BASE } from '../utils/API_URL_CONF';
 import '../css/AdminPanel.css';
+import Spinner from '../components/Spinner';
 
 const SupportTab = ({ messages, selectedUserId, onSelectUser, replyText, onChangeReplyText, onSendReply, users }) => {
     const messagesArray = Array.isArray(messages) ? messages : [];
@@ -75,6 +76,7 @@ const AdminPanel = () => {
     const [messages, setMessages] = useState([]);
     const [users, setUsers] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const postMessageSupportReply = async () => {
         if (!reply.trim() || !selectedUserId) return;
@@ -99,6 +101,7 @@ const AdminPanel = () => {
     }
 
     const getMessagesSupport = async () => {
+        setIsLoading(true);
         try {
             const response = await axios.get(`${API_URL_BASE}/messages_support/support?id_getter=1&id_sender=1`);
             if (response.status === 200) {
@@ -134,12 +137,18 @@ const AdminPanel = () => {
                 }
             }
         } catch (error) {
+        } finally {
+            setIsLoading(false);
         }
     }
 
     useEffect(() => {
         getMessagesSupport();
     }, []);
+
+    if (isLoading) {
+        return <Spinner fullScreen />;
+    }
 
     return (
         <div className="admin-panel">

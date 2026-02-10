@@ -6,6 +6,7 @@ import { API_URL_BASE } from '../utils/API_URL_CONF';
 import { useAuth } from '../utils/authContext';
 import { ensureArrayOptions } from '../utils/options';
 import '../css/Test.css';
+import Spinner from '../components/Spinner';
 
 const RESPONSE_ARRAY_KEYS = ['data', 'tests', 'items', 'results', 'rows', 'list'];
 
@@ -156,6 +157,7 @@ const Test = () => {
     const [tests, setTests] = useState([]);
     const [completedTests, setCompletedTests] = useState([]);
     const [isAdding, setIsAdding] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const API_TESTS_URL = `${API_URL_BASE}/tests`;
     const API_LESSONS_URL = `${API_URL_BASE}/lessons`;
     const API_LESSON_PROGRESS_URL = `${API_URL_BASE}/lesson_progress`;
@@ -239,6 +241,7 @@ const Test = () => {
 
     useEffect(() => {
         const getTests = async () => {
+            setIsLoading(true);
             try {
                 const response = await axios.get(API_TESTS_URL);
                 if (response.status === 200) {
@@ -254,6 +257,8 @@ const Test = () => {
                 }
             } catch (err) {
                 setTests([]);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -337,6 +342,10 @@ const Test = () => {
     }, [completedStorageKey, fetchLessonProgress, getLessons]);
 
     const completedTestsSet = useMemo(() => new Set(completedTests.map(String)), [completedTests]);
+
+    if (isLoading) {
+        return <Spinner fullScreen />;
+    }
 
     return (
         <div className="container test-page">

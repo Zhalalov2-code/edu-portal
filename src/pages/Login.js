@@ -5,6 +5,7 @@ import axios from 'axios';
 import { API_URL_BASE } from '../utils/API_URL_CONF';
 import { useAuth } from '../utils/authContext';
 import { signWithGoogle } from '../utils/firebaseConfig';
+import Spinner from '../components/Spinner';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -147,6 +148,10 @@ const Login = () => {
       setErrors({ general: 'Ошибка создания аккаунта' });
     }
   };
+
+  if (isLoading) {
+    return <Spinner fullScreen />;
+  }
 
   return (
     <div className="auth-container">

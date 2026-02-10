@@ -4,6 +4,7 @@ import '../css/TeacherDashboard.css';
 import axios from 'axios';
 import { API_URL_BASE } from '../utils/API_URL_CONF';
 import CreateCourseModal from '../components/Course/CreateCourseModal';
+import Spinner from '../components/Spinner';
 
 const TeacherDashboard = ({ user }) => {
   const [recentCourses, setRecentCourses] = useState([]);
@@ -112,16 +113,7 @@ const TeacherDashboard = ({ user }) => {
   }, [user, API_URL]);
 
   if (isLoading) {
-    return (
-      <div className="teacher-dashboard">
-        <div className="container">
-          <div className="loading-state">
-            <div className="spinner-large"></div>
-            <p>Загружаем данные...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <Spinner fullScreen />;
   }
 
   const totalCourses = recentCourses.length;

@@ -5,6 +5,7 @@ import { API_URL_BASE } from "../utils/API_URL_CONF";
 import { useAuth } from "../utils/authContext";
 import { EllipsisVertical } from "lucide-react";
 import ModalDetailsChats from "../components/detailsChatsModal";
+import Spinner from '../components/Spinner';
 
 const ChatUsers = () => {
     const { user } = useAuth();
@@ -18,6 +19,7 @@ const ChatUsers = () => {
     const [isGroupChat, setIsGroupChat] = useState(false);
     const [selectedGroupUsers, setSelectedGroupUsers] = useState([]);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const groupName = useRef(null);
     const combinedChats = [...allChats, ...allGroupChats.map(g => ({
         ...g, id_chat: g.id_group
@@ -124,9 +126,12 @@ const ChatUsers = () => {
     }, [selectedChatCombined, user]);
 
     useEffect(() => {
-        getAllUsers();
-        getAllChat();
-        getAllGroupChat();
+        const loadData = async () => {
+            setIsLoading(true);
+            await Promise.all([getAllUsers(), getAllChat(), getAllGroupChat()]);
+            setIsLoading(false);
+        };
+        loadData();
     }, [getAllUsers, getAllChat, getAllGroupChat]);
 
     useEffect(() => {
@@ -326,6 +331,10 @@ const ChatUsers = () => {
             alert(`Ошибка: ${errorMsg}`);
         }
     };
+
+    if (isLoading) {
+        return <Spinner fullScreen />;
+    }
 
     return (<div className="uc-chat-page">
         <div className="chat-container">
