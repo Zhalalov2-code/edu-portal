@@ -87,7 +87,7 @@ const DetailsNews = () => {
 
     const getReplys = useCallback(async (id_comment) => {
         try {
-            const response = await axios.get(`${API_URL_BASE}/replies_to_comments?id_comment=${id_comment}`);
+            const response = await axios.get(`${API_URL_BASE}/comments?parent_id=${id_comment}`);
             if (response.status === 200 || response.status === 201) {
                 let all_replies = [];
                 if (Array.isArray(response.data)) {
@@ -204,9 +204,9 @@ const DetailsNews = () => {
                                         {responseReplys[comment.id_comment]?.length > 0 && (
                                             <div className='details-news__replies'>
                                                 {responseReplys[comment.id_comment].map((reply, replyIndex) => (
-                                                    <div className='details-news__reply' key={reply.id_reply || replyIndex}>
+                                                    <div className='details-news__reply' key={reply.id_comment || replyIndex}>
                                                         <span className='details-news__reply-name'>
-                                                            {reply.user_name || 'Пользователь'}:
+                                                            {reply.name_sender || 'Пользователь'}:
                                                         </span>
                                                         <span className='details-news__reply-text'>
                                                             {reply.text}

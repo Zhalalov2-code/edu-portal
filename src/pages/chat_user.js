@@ -201,7 +201,6 @@ const ChatUsers = () => {
 
             const response = await axios.post(`${API_URL_BASE}/group_chats`, payload);
 
-            // 3. Проверяем структуру ответа (твой PHP возвращает кастомный статус)
             if (response.data?.status && ![200, 201].includes(response.data.status)) {
                 alert(`Ошибка сервера: ${response.data.message || 'Неизвестная ошибка'}`);
                 return;
@@ -224,15 +223,12 @@ const ChatUsers = () => {
             console.error("🔴 КРИТИЧЕСКАЯ ОШИБКА ПРИ СОЗДАНИИ:");
 
             if (error.response) {
-                // Сервер ответил кодом 4xx или 5xx
                 console.error("Данные ошибки от сервера:", error.response.data);
                 console.error("Статус ответа:", error.response.status);
                 console.error("Заголовки ответа:", error.response.headers);
             } else if (error.request) {
-                // Запрос был отправлен, но ответ не получен
                 console.error("Запрос отправлен, но ответа нет (Network Error):", error.request);
             } else {
-                // Ошибка при настройке запроса
                 console.error("Ошибка настройки запроса:", error.message);
             }
 

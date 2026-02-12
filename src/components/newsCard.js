@@ -67,9 +67,9 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
         }
     }, []);
 
-    const getReplys = useCallback(async (id_comment) => {
+    const getReplys = useCallback(async (parent_id) => {
         try {
-            const response = await axios.get(`${API_URL_BASE}/replies_to_comments?id_comment=${id_comment}`);
+            const response = await axios.get(`${API_URL_BASE}/comments?parent_id=${parent_id}`);
             if (response.status === 200 || response.status === 201) {
                 let all_replies = [];
                 if (Array.isArray(response.data)) {
@@ -86,7 +86,7 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
                 }
                 setResponseReplys(prev => ({
                     ...prev,
-                    [id_comment]: all_replies
+                    [parent_id]: all_replies
                 }));
             } else {
                 alert('Ошибка при получении ответов на комментарии');
@@ -128,6 +128,13 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
 
     const sendComment = async (form_data) => {
         try {
+            const text = commentTextByNews[form_data.id_news] || '';
+
+            if (!text.trim()) {
+                alert('Введите текст комментария');
+                return;
+            }
+
             let body = new URLSearchParams();
 
             body.append('text', commentTextByNews[form_data.id_news] || '');
@@ -155,9 +162,9 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
         }
     }
 
-    const sendReply = async (id_comment, id_news) => {
+    const sendReply = async (parent_id, id_news) => {
         try {
-            const text = replyText[id_comment] || '';
+            const text = replyText[parent_id] || '';
 
             if (!text.trim()) {
                 alert('Введите текст ответа');
@@ -166,13 +173,14 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
 
             let body = new URLSearchParams();
             body.append('text', text);
-            body.append('user_id', user ? user.id : null);
-            body.append('id_comment', id_comment);
-            body.append('user_name', user ? user.name : 'Пользователь');
+            body.append('id_user', user ? user.id : null);
+            body.append('id_news', id_news);
+            body.append('name_sender', user ? user.name : 'Пользователь');
+            body.append('parent_id', parent_id);
 
             const response = await axios({
                 method: 'post',
-                url: `${API_URL_BASE}/replies_to_comments`,
+                url: `${API_URL_BASE}/comments`,
                 data: body,
             });
 
@@ -185,7 +193,7 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
 
             setReplyText(prev => ({
                 ...prev,
-                [id_comment]: ''
+                [parent_id]: ''
             }));
             setActiveReply(null);
             getComments(id_news);
@@ -207,21 +215,6 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
         } catch (error) {
             console.error('Error deleting comment:', error);
             alert('Ошибка при удалении комментария. Попробуйте еще раз.')
-        }
-    }
-
-    const deleteReply = async (id_reply, id_cpmment) => {
-        try {
-            const response = await axios.delete(`${API_URL_BASE}/replies_to_comments?id_reply=${id_reply}`);
-            if (!response.data.status || (response.data.status !== 201 && response.data.status !== 200)) {
-                alert(response.data.error || 'Не удалось удалить ответ');
-                return;
-            }
-            alert('Ответ успешно удален');
-            getReplys(id_cpmment);
-        } catch (error) {
-            console.error('Error deleting reply:', error);
-            alert('Ошибка при удалении ответа. Попробуйте еще раз.')
         }
     }
 
@@ -388,32 +381,34 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
                                                             <>
                                                                 <div className='replies-container'>
                                                                     {responseReplys[comment.id_comment].map((reply, replyIndex) => (
-                                                                        <div className='reply-item' key={reply.id_reply || replyIndex}>
+                                                                        <div className='reply-item' key={reply.id_comment || replyIndex} onClick={(e) => e.stopPropagation()}>
                                                                             <div className='reply-content'>
-                                                                                <span className='reply-author'>{reply.user_name || 'Пользователь'} <span className='reply-date'>{formatDate(reply.created_at)}.</span></span>
+                                                                                <span className='reply-author'>{reply.name_sender || 'Пользователь'} <span className='reply-date'>{formatDate(reply.created_at)}.</span></span>
                                                                                 <span className='reply-text'>{reply.text}</span>
                                                                             </div>
                                                                             <div className='dropdown-delete-reply'>
                                                                                 <button
                                                                                     className='reply-options'
-                                                                                    onClick={() => setOpenReplyDropdown(openReplyDropdown === reply.id_reply ? null : reply.id_reply)}
+                                                                                    onClick={(e) => { e.stopPropagation(); setOpenReplyDropdown(openReplyDropdown === reply.id_comment ? null : reply.id_comment); setOpenCommentDropdown(null); }}
                                                                                 >
                                                                                     ⋯
                                                                                 </button>
-                                                                                {openReplyDropdown === reply.id_reply && (
-                                                                                    <ul className='dropdown-menu-delete-reply show'>
-                                                                                        <li>
-                                                                                            <button
-                                                                                                className='dropdown-item-delete-reply'
-                                                                                                onClick={() => {
-                                                                                                    deleteReply(reply.id_reply, comment.id_comment);
-                                                                                                    setOpenReplyDropdown(null);
-                                                                                                }}
-                                                                                            >
-                                                                                                Удалить
-                                                                                            </button>
-                                                                                        </li>
-                                                                                    </ul>
+                                                                                {openReplyDropdown === reply.id_comment && (
+                                                                                    (reply.id_user === user?.id || comment.id_user === user?.id) && (
+                                                                                        <ul className='dropdown-menu-delete-reply show'>
+                                                                                            <li>
+                                                                                                <button
+                                                                                                    className='dropdown-item-delete-reply'
+                                                                                                    onClick={() => {
+                                                                                                        deleteComment(reply.id_comment, item.id_news);
+                                                                                                        setOpenReplyDropdown(null);
+                                                                                                    }}
+                                                                                                >
+                                                                                                    Удалить
+                                                                                                </button>
+                                                                                            </li>
+                                                                                        </ul>
+                                                                                    )
                                                                                 )}
                                                                             </div>
                                                                         </div>
@@ -475,24 +470,26 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
                                             <div className='dropdown-delete-comment'>
                                                 <button
                                                     className='comment-options'
-                                                    onClick={() => setOpenCommentDropdown(openCommentDropdown === comment.id_comment ? null : comment.id_comment)}
+                                                    onClick={(e) => { e.stopPropagation(); setOpenCommentDropdown(openCommentDropdown === comment.id_comment ? null : comment.id_comment); setOpenReplyDropdown(null); }}
                                                 >
                                                     ⋯
                                                 </button>
                                                 {openCommentDropdown === comment.id_comment && (
-                                                    <ul className='dropdown-menu-delete-comment show'>
-                                                        <li>
-                                                            <button
-                                                                className='dropdown-item-delete-comment'
-                                                                onClick={() => {
-                                                                    deleteComment(comment.id_comment, item.id_news);
-                                                                    setOpenCommentDropdown(null);
-                                                                }}
-                                                            >
-                                                                Удалить
-                                                            </button>
-                                                        </li>
-                                                    </ul>
+                                                    (comment.id_user === user?.id || item.id_user === user?.id) && (
+                                                        <ul className='dropdown-menu-delete-comment show'>
+                                                            <li>
+                                                                <button
+                                                                    className='dropdown-item-delete-comment'
+                                                                    onClick={() => {
+                                                                        deleteComment(comment.id_comment, item.id_news);
+                                                                        setOpenCommentDropdown(null);
+                                                                    }}
+                                                                >
+                                                                    Удалить
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    )
                                                 )}
                                             </div>
                                         </div>
@@ -533,4 +530,4 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
     )
 }
 
-export default NewsCard
+export default NewsCard;
