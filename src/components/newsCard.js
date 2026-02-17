@@ -19,6 +19,9 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
     const [responseReplys, setResponseReplys] = useState({});
     const [activeShowReplies, setActiveShowReplies] = useState(null);
     const [openReplyDropdown, setOpenReplyDropdown] = useState(null);
+    const [activeNestedReply, setActiveNestedReply] = useState(null);
+    const [nestedReplyText, setNestedReplyText] = useState({});
+    const [activeShowNestedReplies, setActiveShowNestedReplies] = useState(null);
 
     const formatDate = (dateString) => {
         if (!dateString) return '';
@@ -107,18 +110,27 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
         });
     }, [newsList, getComments]);
 
-    useEffect(() => {
-        Object.keys(commentsByNews).forEach(id_news => {
-            const comments = commentsByNews[id_news];
-            if (Array.isArray(comments)) {
-                comments.forEach(comment => {
-                    if (comment.id_comment) {
-                        getReplys(comment.id_comment);
-                    }
-                });
+    const handleToggleReplies = async (commentId) => {
+        if (activeShowReplies === commentId) {
+            setActiveShowReplies(null);
+        } else {
+            if (!responseReplys[commentId]) {
+                await getReplys(commentId);
             }
-        });
-    }, [commentsByNews, getReplys])
+            setActiveShowReplies(commentId);
+        }
+    };
+
+    const handleToggleNestedReplies = async (replyId) => {
+        if (activeShowNestedReplies === replyId) {
+            setActiveShowNestedReplies(null);
+        } else {
+            if (!responseReplys[replyId]) {
+                await getReplys(replyId);
+            }
+            setActiveShowNestedReplies(replyId);
+        }
+    };
 
     if (!newsList.length) {
         return (
@@ -203,7 +215,46 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
         }
     }
 
-    const deleteComment = async (id_comment, id_news) => {
+    const sendNestedReply = async (parent_id, id_news) => {
+        try {
+            const text = nestedReplyText[parent_id] || '';
+
+            if (!text.trim()) {
+                alert('Введите текст ответа');
+                return;
+            }
+
+            let body = new URLSearchParams();
+            body.append('text', text);
+            body.append('id_user', user ? user.id : null);
+            body.append('id_news', id_news);
+            body.append('name_sender', user ? user.name : 'Пользователь');
+            body.append('parent_id', parent_id);
+
+            const response = await axios({
+                method: 'post',
+                url: `${API_URL_BASE}/comments`,
+                data: body,
+            });
+
+            if (!response.data.status || (response.data.status !== 201 && response.data.status !== 200)) {
+                alert(response.data.error || 'Не удалось отправить ответ');
+                return;
+            }
+
+            setNestedReplyText(prev => ({
+                ...prev,
+                [parent_id]: ''
+            }));
+            setActiveNestedReply(null);
+            await getReplys(parent_id);
+        } catch (error) {
+            console.error('Error sending nested reply:', error);
+            alert('Ошибка при отправке ответа. Попробуйте еще раз.');
+        }
+    }
+
+    const deleteComment = async (id_comment, id_news, parent_id = null) => {
         try {
             const response = await axios.delete(`${API_URL_BASE}/comments?id_comment=${id_comment}`);
             if (!response.data.status || (response.data.status !== 201 && response.data.status !== 200)) {
@@ -211,7 +262,14 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
                 return;
             }
             alert('Комментарий успешно удален');
+            
+            // Обновляем основные комментарии
             getComments(id_news);
+            
+            // Если это ответ, обновляем список ответов родителя
+            if (parent_id) {
+                await getReplys(parent_id);
+            }
         } catch (error) {
             console.error('Error deleting comment:', error);
             alert('Ошибка при удалении комментария. Попробуйте еще раз.')
@@ -367,24 +425,137 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
                                             <div className='comment-content'>
                                                 <span className='comment-author'>{comment.name_sender || 'Пользователь'} <span className='comment-date'>{formatDate(comment.created_at)}.</span></span>
                                                 <span className='comment-text'>{comment.text || comment.comment}</span>
-                                                {(responseReplys[comment.id_comment] && responseReplys[comment.id_comment].length > 0) && (
+                                                {activeShowReplies !== comment.id_comment ? (
+                                                    <span
+                                                        className='comment-reply'
+                                                        onClick={() => handleToggleReplies(comment.id_comment)}
+                                                        style={{ cursor: 'pointer' }}
+                                                    >
+                                                        {responseReplys[comment.id_comment] ? `Показать ответы` : 'Показать ответы'}
+                                                    </span>
+                                                ) : (
                                                     <>
-                                                        {activeShowReplies !== comment.id_comment ? (
-                                                            <span
-                                                                className='comment-reply'
-                                                                onClick={() => setActiveShowReplies(comment.id_comment)}
-                                                                style={{ cursor: 'pointer' }}
-                                                            >
-                                                                Ответы ({responseReplys[comment.id_comment].length})
-                                                            </span>
-                                                        ) : (
-                                                            <>
+                                                        {responseReplys[comment.id_comment] && responseReplys[comment.id_comment].length > 0 ? (
                                                                 <div className='replies-container'>
                                                                     {responseReplys[comment.id_comment].map((reply, replyIndex) => (
                                                                         <div className='reply-item' key={reply.id_comment || replyIndex} onClick={(e) => e.stopPropagation()}>
                                                                             <div className='reply-content'>
                                                                                 <span className='reply-author'>{reply.name_sender || 'Пользователь'} <span className='reply-date'>{formatDate(reply.created_at)}.</span></span>
                                                                                 <span className='reply-text'>{reply.text}</span>
+
+                                                                                {activeShowNestedReplies !== reply.id_comment ? (
+                                                                                    <span
+                                                                                        className='comment-reply'
+                                                                                        onClick={() => handleToggleNestedReplies(reply.id_comment)}
+                                                                                        style={{ cursor: 'pointer' }}
+                                                                                    >
+                                                                                        {responseReplys[reply.id_comment] ? `Показать ответы` : 'Показать ответы'}
+                                                                                    </span>
+                                                                                ) : (
+                                                                                    <>
+                                                                                        {responseReplys[reply.id_comment] && responseReplys[reply.id_comment].length > 0 ? (
+                                                                                            <div className='nested-replies-container' style={{ marginLeft: '20px', marginTop: '10px' }}>
+                                                                                        {responseReplys[reply.id_comment].map((nestedReply, nestedIndex) => (
+                                                                                            <div className='nested-reply-item' key={nestedReply.id_comment || nestedIndex}>
+                                                                                                <div className='reply-content'>
+                                                                                                    <span className='reply-author'>{nestedReply.name_sender || 'Пользователь'} <span className='reply-date'>{formatDate(nestedReply.created_at)}.</span></span>
+                                                                                                    <span className='reply-text'>{nestedReply.text}</span>
+                                                                                                </div>
+                                                                                                <div className='dropdown-delete-reply'>
+                                                                                                    <button
+                                                                                                        className='reply-options'
+                                                                                                        onClick={(e) => { e.stopPropagation(); setOpenReplyDropdown(openReplyDropdown === nestedReply.id_comment ? null : nestedReply.id_comment); }}
+                                                                                                    >
+                                                                                                        ⋯
+                                                                                                    </button>
+                                                                                                    {openReplyDropdown === nestedReply.id_comment && (
+                                                                                                        (nestedReply.id_user === user?.id || reply.id_user === user?.id) && (
+                                                                                                            <ul className='dropdown-menu-delete-reply show'>
+                                                                                                                <li>
+                                                                                                                    <button
+                                                                                                                        className='dropdown-item-delete-reply'
+                                                                                                                        onClick={() => {
+                                                                                                                            deleteComment(nestedReply.id_comment, item.id_news, reply.id_comment);
+                                                                                                                            setOpenReplyDropdown(null);
+                                                                                                                        }}
+                                                                                                                    >
+                                                                                                                        Удалить
+                                                                                                                    </button>
+                                                                                                                </li>
+                                                                                                            </ul>
+                                                                                                        )
+                                                                                                    )}
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        ))}
+                                                                                            </div>
+                                                                                        ) : (
+                                                                                            responseReplys[reply.id_comment] && (
+                                                                                                <>
+                                                                                                    <div className='no-replies' style={{ marginLeft: '20px', marginTop: '10px' }}>Ответов нет</div>
+                                                                                                    <span
+                                                                                                        className='comment-reply'
+                                                                                                        onClick={() => handleToggleNestedReplies(reply.id_comment)}
+                                                                                                        style={{ cursor: 'pointer' }}
+                                                                                                    >
+                                                                                                        Скрыть
+                                                                                                    </span>
+                                                                                                </>
+                                                                                            )
+                                                                                        )}
+                                                                                        {responseReplys[reply.id_comment] && responseReplys[reply.id_comment].length > 0 && (
+                                                                                            <span
+                                                                                                className='comment-reply'
+                                                                                                onClick={() => handleToggleNestedReplies(reply.id_comment)}
+                                                                                                style={{ cursor: 'pointer' }}
+                                                                                            >
+                                                                                                Скрыть ответы
+                                                                                            </span>
+                                                                                        )}
+                                                                                    </>
+                                                                                )}
+
+                                                                                {activeNestedReply !== reply.id_comment ? (
+                                                                                    <span
+                                                                                        className='comment-reply'
+                                                                                        onClick={() => setActiveNestedReply(reply.id_comment)}
+                                                                                        style={{ cursor: 'pointer' }}
+                                                                                    >
+                                                                                        Ответить
+                                                                                    </span>
+                                                                                ) : (
+                                                                                    <div className='reply-input-container'>
+                                                                                        <input
+                                                                                            type='text'
+                                                                                            placeholder='Ваш ответ...'
+                                                                                            className='comment-input-field'
+                                                                                            value={nestedReplyText[reply.id_comment] || ''}
+                                                                                            onChange={(e) => setNestedReplyText(prev => ({
+                                                                                                ...prev,
+                                                                                                [reply.id_comment]: e.target.value
+                                                                                            }))}
+                                                                                            autoFocus
+                                                                                        />
+                                                                                        <button
+                                                                                            className='comment-submit-btn'
+                                                                                            onClick={() => sendNestedReply(reply.id_comment, item.id_news)}
+                                                                                        >
+                                                                                            Отправить
+                                                                                        </button>
+                                                                                        <button
+                                                                                            className='comment-cancel-btn'
+                                                                                            onClick={() => {
+                                                                                                setActiveNestedReply(null);
+                                                                                                setNestedReplyText(prev => ({
+                                                                                                    ...prev,
+                                                                                                    [reply.id_comment]: ''
+                                                                                                }));
+                                                                                            }}
+                                                                                        >
+                                                                                            Отмена
+                                                                                        </button>
+                                                                                    </div>
+                                                                                )}
                                                                             </div>
                                                                             <div className='dropdown-delete-reply'>
                                                                                 <button
@@ -400,7 +571,7 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
                                                                                                 <button
                                                                                                     className='dropdown-item-delete-reply'
                                                                                                     onClick={() => {
-                                                                                                        deleteComment(reply.id_comment, item.id_news);
+                                                                                                            deleteComment(reply.id_comment, item.id_news, comment.id_comment);
                                                                                                         setOpenReplyDropdown(null);
                                                                                                     }}
                                                                                                 >
@@ -414,14 +585,28 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
                                                                         </div>
                                                                     ))}
                                                                 </div>
-                                                                <span
-                                                                    className='comment-reply'
-                                                                    onClick={() => setActiveShowReplies(null)}
-                                                                    style={{ cursor: 'pointer' }}
-                                                                >
-                                                                    Скрыть ответы
-                                                                </span>
-                                                            </>
+                                                        ) : (
+                                                            responseReplys[comment.id_comment] && (
+                                                                <>
+                                                                    <div className='no-replies'>Ответов на комментарий нет</div>
+                                                                    <span
+                                                                        className='comment-reply'
+                                                                        onClick={() => handleToggleReplies(comment.id_comment)}
+                                                                        style={{ cursor: 'pointer' }}
+                                                                    >
+                                                                        Скрыть
+                                                                    </span>
+                                                                </>
+                                                            )
+                                                        )}
+                                                        {responseReplys[comment.id_comment] && responseReplys[comment.id_comment].length > 0 && (
+                                                            <span
+                                                                className='comment-reply'
+                                                                onClick={() => handleToggleReplies(comment.id_comment)}
+                                                                style={{ cursor: 'pointer' }}
+                                                            >
+                                                                Скрыть ответы
+                                                            </span>
                                                         )}
                                                     </>
                                                 )}

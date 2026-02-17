@@ -131,6 +131,19 @@ const DetailsNews = () => {
         });
     }, [comments, getReplys]);
 
+    useEffect(() => {
+        Object.keys(responseReplys).forEach(parent_id => {
+            const replies = responseReplys[parent_id];
+            if (Array.isArray(replies)) {
+                replies.forEach(reply => {
+                    if (reply.id_comment) {
+                        getReplys(reply.id_comment);
+                    }
+                });
+            }
+        });
+    }, [responseReplys, getReplys]);
+
     if (isLoading) {
         return <Spinner fullScreen />;
     }
@@ -214,6 +227,23 @@ const DetailsNews = () => {
                                                         <span className='details-news__reply-date'>
                                                             {formatDate(reply.created_at)}
                                                         </span>
+                                                        {responseReplys[reply.id_comment]?.length > 0 && (
+                                                            <div className='details-news__nested-replies'>
+                                                                {responseReplys[reply.id_comment].map((nestedReply, nestedIndex) => (
+                                                                    <div className='details-news__reply' key={nestedReply.id_comment || nestedIndex}>
+                                                                        <span className='details-news__reply-name'>
+                                                                            {nestedReply.name_sender || 'Пользователь'}:
+                                                                        </span>
+                                                                        <span className='details-news__reply-text'>
+                                                                            {nestedReply.text}
+                                                                        </span>
+                                                                        <span className='details-news__reply-date'>
+                                                                            {formatDate(nestedReply.created_at)}
+                                                                        </span>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 ))}
                                             </div>

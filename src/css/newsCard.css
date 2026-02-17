@@ -320,6 +320,17 @@
     padding: 10px 0;
 }
 
+.no-replies {
+    margin: 8px 0;
+    font-size: 12px;
+    color: #8e8e8e;
+    font-style: italic;
+    padding: 8px 12px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    text-align: center;
+}
+
 .comment-item {
     padding: 8px 0;
     font-size: 13px;
