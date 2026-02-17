@@ -167,7 +167,22 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
                 ...prev,
                 [form_data.id_news]: ''
             }));
-            getComments(form_data.id_news);
+            const createdComment = Array.isArray(response.data?.data)
+                ? response.data.data[0]
+                : response.data?.data || response.data?.comment || null;
+            if (createdComment) {
+                setCommentsByNews(prev => {
+                    const existing = prev[form_data.id_news] || [];
+                    const exists = createdComment.id_comment
+                        ? existing.some(item => item.id_comment === createdComment.id_comment)
+                        : false;
+                    return {
+                        ...prev,
+                        [form_data.id_news]: exists ? existing : [...existing, createdComment]
+                    };
+                });
+            }
+            await getComments(form_data.id_news);
         } catch (error) {
             console.error('Error sending comment:', error);
             alert('Ошибка при отправке комментария. Попробуйте еще раз.')
@@ -208,7 +223,23 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
                 [parent_id]: ''
             }));
             setActiveReply(null);
-            getComments(id_news);
+            const createdReply = Array.isArray(response.data?.data)
+                ? response.data.data[0]
+                : response.data?.data || response.data?.comment || null;
+            if (createdReply) {
+                setResponseReplys(prev => {
+                    const existing = prev[parent_id] || [];
+                    const exists = createdReply.id_comment
+                        ? existing.some(item => item.id_comment === createdReply.id_comment)
+                        : false;
+                    return {
+                        ...prev,
+                        [parent_id]: exists ? existing : [...existing, createdReply]
+                    };
+                });
+            }
+            await getReplys(parent_id);
+            await getComments(id_news);
         } catch (error) {
             console.error('Error sending reply:', error);
             alert('Ошибка при отправке ответа. Попробуйте еще раз.');
