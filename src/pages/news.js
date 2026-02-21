@@ -10,6 +10,8 @@ const News = () => {
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [newsList, setNewsList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [categoryList, setCategoryList] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('');
 
     const handleOpenModal = () => {
         setIsOpenModal(true)
@@ -19,10 +21,11 @@ const News = () => {
         setIsOpenModal(false)
     }
 
-    const getNews = async () => {
+    const getNews = async (categoryId) => {
         setIsLoading(true);
         try {
-            const response = await axios.get(`${API_URL_BASE}/news`);
+            const url = categoryId ? `${API_URL_BASE}/news?id_category=${categoryId}` : `${API_URL_BASE}/news`;
+            const response = await axios.get(url);
             if (response.status === 200 || response.status === 201) {
                 if (typeof response.data === 'string') {
                     const text = response.data.trim();
@@ -62,40 +65,62 @@ const News = () => {
         }
     }
 
+    const getCategory = async () => {
+        try {
+            const response = await axios.get(`${API_URL_BASE}/categories`);
+            if (response.status === 200 || response.status === 201) {
+                let all_category = [];
+                if (Array.isArray(response.data)) {
+                    all_category = response.data[2] || [];
+                } else if (response.data && response.data.data) {
+                    all_category = response.data.data;
+                } else if (response.data && typeof response.data === 'object') {
+                    const value = Object.values(response.data);
+                    if (Array.isArray(value[2])) {
+                        all_category = value[2];
+                    } else if (Array.isArray(value[1])) {
+                        all_category = value[1];
+                    } else if (Array.isArray(value[0])) {
+                        all_category = value[0];
+                    } else {
+                        all_category = value;
+                    }
+                } else {
+                    all_category = [];
+                }
+                setCategoryList(all_category);
+            }
+        } catch (error) {
+            alert('Ошибка при получении категорий. Попробуйте еще раз.')
+        }
+    }
+
     useEffect(() => {
         getNews();
+        getCategory();
     }, []);
 
     const handlePostsNews = async (formData) => {
         try {
-            let data, headers = {}
+            const data = new FormData();
+            data.append('text', formData.text || '');
+            data.append('id_user', formData.id_user || '');
+            data.append('name_user', formData.name_user || 'Пользователь');
+            data.append('id_category', formData.id_category || '');
 
             if (formData.files instanceof File) {
-                console.log('[handlePostsNews] sending multipart/form-data');
-                data = new FormData();
-                data.append('text', formData.text || '');
                 data.append('files', formData.files);
-                data.append('id_user', formData.id_user || null);
-                data.append('name_user', formData.name_user || 'Пользователь');
-                headers['Content-Type'] = 'multipart/form-data'
-            } else {
-                const params = new URLSearchParams();
-                params.append('text', formData.text || '');
-                params.append('id_user', formData.id_user || null);
-                params.append('name_user', formData.name_user || 'Пользователь');
-                data = params;
             }
 
             const response = await axios({
                 method: 'POST',
                 url: `${API_URL_BASE}/news`,
-                data: data,
-                headers: headers
+                data: data
             })
 
             if (typeof response.data === 'string') {
                 if (response.data.includes('Fatal error') || response.data.includes('Warning')) {
-                    alert('Ошибка сервера! Проверьте:\n1. Существует ли таблица "news" в БД\n2. Логи PHP в консоли');
+                    alert('Ошибка сервера!\n\nОтвет: ' + response.data.substring(0, 300));
                     return;
                 }
             }
@@ -106,9 +131,8 @@ const News = () => {
             }
 
             setIsOpenModal(false)
-            getNews();
+            getNews(selectedCategory);
         } catch (error) {
-            console.log('[handlePostsNews] error:', error);
             alert('Ошибка при отправке. Попробуйте еще раз.')
         }
     }
@@ -121,11 +145,15 @@ const News = () => {
                 return;
             }
             alert('Новость успешно удалена');
-            getNews();
+            getNews(selectedCategory);
         } catch (error) {
-            console.error('Error deleting news:', error);
             alert('Ошибка при удалении новости. Попробуйте еще раз.')
         }
+    }
+
+    const filterByCategory = (categoryId) => {
+        setSelectedCategory(categoryId);
+        getNews(categoryId);
     }
 
     if (isLoading) {
@@ -137,6 +165,16 @@ const News = () => {
             <div className="header-news">
                 <h1>Лента новостей:</h1>
                 <button className='btn btn-primary' onClick={handleOpenModal}>Поделиться контентом +</button>
+            </div>
+            <div className='filter-section-news'>
+                <select className='filter-category-news' value={selectedCategory} onChange={(e) => filterByCategory(e.target.value)}>
+                    <option value="">Все категории</option>
+                    {categoryList.map((category) => (
+                        <option key={category.id_category} value={category.id_category}>
+                            {category.name_category}
+                        </option>
+                    ))}
+                </select>
             </div>
             <div className="content-news">
                 <NewsCard

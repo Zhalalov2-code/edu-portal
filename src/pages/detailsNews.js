@@ -56,6 +56,7 @@ const DetailsNews = () => {
                     data = found;
                 }
                 setNews(data);
+                console.log('Полученные детали новости:', data);
             }
         } catch (error) {
             console.error('Error fetching news details:', error);
@@ -187,6 +188,7 @@ const DetailsNews = () => {
                     </div>
 
                     <div className='details-news__body'>
+                        <p><b>Категория:</b> {news?.name_category || 'Без категории'}</p>
                         <p><b>Описание:</b> {news?.text || 'Описание отсутствует.'}</p>
                     </div>
                 </div>

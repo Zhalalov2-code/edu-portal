@@ -104,3 +104,11 @@
     background-color: #5a6268;
     transform: translateY(-1px);
 }
+
+.select-category {
+    width: 65%;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid silver;
+    margin-left: 5px;
+}

@@ -293,11 +293,8 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
                 return;
             }
             alert('Комментарий успешно удален');
-            
-            // Обновляем основные комментарии
             getComments(id_news);
             
-            // Если это ответ, обновляем список ответов родителя
             if (parent_id) {
                 await getReplys(parent_id);
             }
@@ -437,6 +434,9 @@ const NewsCard = ({ newsList = [], deleteNews, getNews }) => {
                             <div className='news-feed-right'>
                                 <div className='news-feed-body'>
                                     <div className='news-feed-caption'>
+                                        <span className='caption-username'>Категория: </span>
+                                         <span className='caption-text'>{item.name_category || 'Без описания'}</span>
+                                        <br />
                                         <span className='caption-username'>Описание: </span>
                                         <span className='caption-text'>{item.text || 'Без описания'}</span>
                                     </div>
