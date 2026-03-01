@@ -158,6 +158,7 @@ const News = () => {
             alert('Категория успешно создана');
             setIsOpenCategoryCard(false);
             getCategory();
+            getNews(selectedCategory);
         } catch (error) {
             alert('Ошибка при создании категории. Попробуйте еще раз.');
         }
