@@ -188,7 +188,7 @@ const DetailsNews = () => {
                     </div>
 
                     <div className='details-news__body'>
-                        <p><b>Категория:</b> {news?.name_category || 'Без категории'}</p>
+                        <p><b>Категория:</b> {news?.parent_name || 'Без категории'}, {news?.child_name || 'Без подкатегории'}</p>
                         <p><b>Описание:</b> {news?.text || 'Описание отсутствует.'}</p>
                     </div>
                 </div>

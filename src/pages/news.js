@@ -5,21 +5,18 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_URL_BASE } from '../utils/API_URL_CONF';
 import Spinner from '../components/Spinner';
+import CreateCategoryModal from '../components/createdCategory';
+import { useAuth } from "../utils/authContext.js";
 
 const News = () => {
-    const [isOpenModal, setIsOpenModal] = useState(false);
     const [newsList, setNewsList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [categoryList, setCategoryList] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
+    const [isOpenNewsCard, setIsOpenNewsCard] = useState(false);
+    const [isOpenCategoryCard, setIsOpenCategoryCard] = useState(false);
+    const { user } = useAuth();
 
-    const handleOpenModal = () => {
-        setIsOpenModal(true)
-    }
-
-    const handleCloseModal = () => {
-        setIsOpenModal(false)
-    }
 
     const getNews = async (categoryId) => {
         setIsLoading(true);
@@ -68,6 +65,7 @@ const News = () => {
     const getCategory = async () => {
         try {
             const response = await axios.get(`${API_URL_BASE}/categories`);
+            
             if (response.status === 200 || response.status === 201) {
                 let all_category = [];
                 if (Array.isArray(response.data)) {
@@ -130,10 +128,38 @@ const News = () => {
                 return;
             }
 
-            setIsOpenModal(false)
+            setIsOpenNewsCard(false);
             getNews(selectedCategory);
         } catch (error) {
             alert('Ошибка при отправке. Попробуйте еще раз.')
+        }
+    }
+
+    const handleCreateCategory = async (categoryData) => {
+        try{
+            const params = new URLSearchParams();
+            params.append('name_category', categoryData.name_category);
+            params.append('slug_category', categoryData.slug_category);
+            if (categoryData.parent_id) {
+                params.append('parent_id', categoryData.parent_id);
+            }
+            
+            const response = await axios.post(`${API_URL_BASE}/categories`, params, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            });
+
+            if (!response.data.status || (response.data.status !== 201 && response.data.status !== 200)) {
+                alert(response.data.error || response.data.message || 'Не удалось создать категорию');
+                return;
+            }
+
+            alert('Категория успешно создана');
+            setIsOpenCategoryCard(false);
+            getCategory();
+        } catch (error) {
+            alert('Ошибка при создании категории. Попробуйте еще раз.');
         }
     }
 
@@ -164,7 +190,12 @@ const News = () => {
         <div className='news-container'>
             <div className="header-news">
                 <h1>Лента новостей:</h1>
-                <button className='btn btn-primary' onClick={handleOpenModal}>Поделиться контентом +</button>
+                <button className='btn btn-primary' onClick={() => setIsOpenNewsCard(true)}>Поделиться контентом +</button>
+                {
+                    (user?.role === 'Admin' || user?.role === 'admin') && (
+                        <button className='btn btn-secondary' onClick={() => setIsOpenCategoryCard(true)}>Создать категорию +</button>
+                    )
+                }
             </div>
             <div className='filter-section-news'>
                 <select className='filter-category-news' value={selectedCategory} onChange={(e) => filterByCategory(e.target.value)}>
@@ -187,9 +218,15 @@ const News = () => {
 
             </div>
             <CreatedNewsCard
-                isOpen={isOpenModal}
-                onClose={handleCloseModal}
+                isOpen={isOpenNewsCard}
+                onClose={() => setIsOpenNewsCard(false)}
                 onSave={handlePostsNews}
+            />
+            <CreateCategoryModal
+                isOpen={isOpenCategoryCard}
+                onClose={() => setIsOpenCategoryCard(false)}
+                onCreate={handleCreateCategory}
+                categories={categoryList}
             />
         </div>
     )
