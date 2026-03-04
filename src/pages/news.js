@@ -7,6 +7,7 @@ import { API_URL_BASE } from '../utils/API_URL_CONF';
 import Spinner from '../components/Spinner';
 import CreateCategoryModal from '../components/createdCategory';
 import { useAuth } from "../utils/authContext.js";
+import CategoryList from '../components/cotegoryList';
 
 const News = () => {
     const [newsList, setNewsList] = useState([]);
@@ -15,9 +16,12 @@ const News = () => {
     const [selectedCategory, setSelectedCategory] = useState('');
     const [isOpenNewsCard, setIsOpenNewsCard] = useState(false);
     const [isOpenCategoryCard, setIsOpenCategoryCard] = useState(false);
+    const [isOpenEditCategoryCard, setIsOpenEditCategoryCard] = useState(false);
+    const [isOpenListCategories, setIsOpenListCategories] = useState(false);
+    const [editingCategory, setEditingCategory] = useState(null);
     const { user } = useAuth();
 
-
+    
     const getNews = async (categoryId) => {
         setIsLoading(true);
         try {
@@ -178,6 +182,75 @@ const News = () => {
         }
     }
 
+    const handleDeleteCategory = async (id_category) => {
+        console.log('🗑️ Попытка удаления категории с ID:', id_category);
+        
+        if (!window.confirm('Вы уверены, что хотите удалить эту категорию?')) {
+            return;
+        }
+
+        try {
+            const response = await axios.delete(`${API_URL_BASE}/categories/${id_category}`);
+            
+            if (!response.data.status || (response.data.status !== 201 && response.data.status !== 200)) {
+                console.error('❌ Ошибка удаления:', response.data.error || response.data.message);
+                alert(response.data.error || response.data.message || 'Не удалось удалить категорию');
+                return;
+            }
+
+            alert('Категория успешно удалена');
+            getCategory();
+            getNews(selectedCategory);
+        } catch (error) {
+            console.error('❌ Ошибка при удалении категории:', error.response?.data || error.message);
+            alert('Ошибка при удалении категории. Попробуйте еще раз.');
+        }
+    }
+
+    const handleEditCategory = async (category) => {
+        setIsOpenListCategories(false);
+        setEditingCategory(category);
+        setIsOpenEditCategoryCard(true);
+    }
+
+    const handleUpdateCategory = async (categoryData) => {
+        if (!editingCategory) {
+            console.error('❌ Нет категории для редактирования');
+            return;
+        }
+
+        try {
+            const params = new URLSearchParams();
+            params.append('id_category', editingCategory.id_category);
+            params.append('name_category', categoryData.name_category);
+            params.append('slug_category', categoryData.slug_category);
+            if (categoryData.parent_id) {
+                params.append('parent_id', categoryData.parent_id);
+            }
+
+            const response = await axios.put(`${API_URL_BASE}/categories/${editingCategory.id_category}`, params, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            });
+
+            if (!response.data.status || (response.data.status !== 201 && response.data.status !== 200)) {
+                console.error('❌ Ошибка обновления:', response.data.error);
+                alert(response.data.error || response.data.message || 'Не удалось обновить категорию');
+                return;
+            }
+
+            alert('Категория успешно обновлена');
+            setIsOpenEditCategoryCard(false);
+            setEditingCategory(null);
+            getCategory();
+            getNews(selectedCategory);
+        } catch (error) {
+            console.error('❌ Ошибка при обновлении категории:', error);
+            alert('Ошибка при обновлении категории. Попробуйте еще раз.');
+        }
+    }
+
     const filterByCategory = (categoryId) => {
         setSelectedCategory(categoryId);
         getNews(categoryId);
@@ -194,7 +267,12 @@ const News = () => {
                 <button className='btn btn-primary' onClick={() => setIsOpenNewsCard(true)}>Поделиться контентом +</button>
                 {
                     (user?.role === 'Admin' || user?.role === 'admin') && (
-                        <button className='btn btn-secondary' onClick={() => setIsOpenCategoryCard(true)}>Создать категорию +</button>
+                        <>
+                            <button className='btn btn-secondary' onClick={() => setIsOpenCategoryCard(true)}>Создать категорию +</button>
+                            <button className='btn btn-primary' onClick={() => setIsOpenListCategories(!isOpenListCategories)}>
+                                {isOpenListCategories ? 'Скрыть категории' : 'Список категории'}
+                            </button>
+                        </>
                     )
                 }
             </div>
@@ -229,6 +307,30 @@ const News = () => {
                 onCreate={handleCreateCategory}
                 categories={categoryList}
             />
+            <CreateCategoryModal
+                isOpen={isOpenEditCategoryCard}
+                onClose={() => {
+                    setIsOpenEditCategoryCard(false);
+                    setEditingCategory(null);
+                }}
+                onCreate={handleUpdateCategory}
+                categories={categoryList}
+                isEditMode={true}
+                editingCategory={editingCategory}
+            />
+            {isOpenListCategories && (
+                <CategoryList
+                    isOpen={isOpenListCategories}
+                    onClose={() => setIsOpenListCategories(false)}
+                    categories={categoryList}
+                    onCategorySelect={(category) => {
+                        filterByCategory(category.id_category);
+                        setIsOpenListCategories(false);
+                    }}
+                    onEdit={handleEditCategory}
+                    onDelete={handleDeleteCategory}
+                />
+            )}
         </div>
     )
 }

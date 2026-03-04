@@ -1,10 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../css/createCategoryModal.css';
 
-const CreateCategoryModal = ({ isOpen, onClose, onCreate, categories = [] }) => {
+const CreateCategoryModal = ({ isOpen, onClose, onCreate, categories = [], isEditMode = false, editingCategory = null }) => {
   const [nameCategory, setNameCategory] = useState('');
   const [slugCategory, setSlugCategory] = useState('');
   const [parentId, setParentId] = useState('');
+
+  useEffect(() => {
+    if (isEditMode && editingCategory) {
+      setNameCategory(editingCategory.name_category || '');
+      setSlugCategory(editingCategory.slug_category || '');
+      setParentId(editingCategory.parent_id || '');
+    } else {
+      setNameCategory('');
+      setSlugCategory('');
+      setParentId('');
+    }
+  }, [isOpen, isEditMode, editingCategory]);
 
   if (!isOpen) return null;
 
@@ -33,11 +45,13 @@ const CreateCategoryModal = ({ isOpen, onClose, onCreate, categories = [] }) => 
     setParentId('');
   };
 
+  const parentCategories = categories.filter(cat => !cat.parent_id || cat.parent_id === '' || cat.parent_id === null);
+
   return (
     <div className="category-modal-overlay">
       <div className="category-modal-card">
         <div className="category-modal-header">
-          <h3>Создать категорию</h3>
+          <h3>{isEditMode ? 'Редактировать категорию' : 'Создать категорию'}</h3>
           <button className="category-modal-close" onClick={onClose}>×</button>
         </div>
         
@@ -72,7 +86,7 @@ const CreateCategoryModal = ({ isOpen, onClose, onCreate, categories = [] }) => 
               className="form-input"
             >
               <option value="">-- Нет родительской категории --</option>
-              {categories.map((cat) => (
+              {parentCategories.map((cat) => (
                 <option key={cat.id_category} value={cat.id_category}>
                   {cat.name_category}
                 </option>
@@ -83,7 +97,7 @@ const CreateCategoryModal = ({ isOpen, onClose, onCreate, categories = [] }) => 
 
         <div className="category-modal-actions">
           <button className="btn btn-primary" onClick={handleCreate}>
-            Создать
+            {isEditMode ? 'Обновить' : 'Создать'}
           </button>
           <button className="btn btn-outline" onClick={onClose}>
             Отмена

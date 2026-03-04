@@ -9,6 +9,7 @@ const CreatedNewsCard = ({ isOpen, onClose, onSave }) => {
     const [file, setFile] = useState(null);
     const { user } = useAuth();
     const [categories, setCategories] = useState([]);
+    const [selectedParentCategory, setSelectedParentCategory] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
 
     const getCategories = async () => {
@@ -38,6 +39,17 @@ const CreatedNewsCard = ({ isOpen, onClose, onSave }) => {
         getCategories();
     }, []);
 
+    const parentCategories = categories.filter(cat => !cat.parent_id || cat.parent_id === '' || cat.parent_id === null);
+
+    const childCategories = selectedParentCategory 
+        ? categories.filter(cat => cat.parent_id === parseInt(selectedParentCategory))
+        : [];
+
+    const handleParentCategoryChange = (e) => {
+        setSelectedParentCategory(e.target.value);
+        setSelectedCategory('');
+    };
+
     if (!isOpen) return null;
 
     const handleSubmit = () => {
@@ -63,16 +75,29 @@ const CreatedNewsCard = ({ isOpen, onClose, onSave }) => {
                 <div className="modal-content-news">
                     <label className='label-news'><b>Добавить контент</b></label>
                     <div>
-                        <label className='label-news'>Выберите категорию: </label>
-                        <select className='select-category' value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                        <label className='label-news'>Выберите родительскую категорию: </label>
+                        <select className='select-category' value={selectedParentCategory} onChange={handleParentCategoryChange}>
                             <option value=''>-- Выберите категорию --</option>
-                            {categories.map((category) => (
+                            {parentCategories.map((category) => (
                                 <option key={category.id_category} value={category.id_category}>
                                     {category.name_category}
                                 </option>
                             ))}
                         </select>
                     </div>
+                    {selectedParentCategory && childCategories.length > 0 && (
+                        <div>
+                            <label className='label-news'>Выберите подкатегорию: </label>
+                            <select className='select-category' value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                                <option value=''>-- Выберите подкатегорию --</option>
+                                {childCategories.map((category) => (
+                                    <option key={category.id_category} value={category.id_category}>
+                                        {category.name_category}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                     <div>
                         <label className='label-news'>Прикрепить файл: </label>
                         <div className='btn-file'>
