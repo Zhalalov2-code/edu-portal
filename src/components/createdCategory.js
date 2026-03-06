@@ -5,6 +5,7 @@ const CreateCategoryModal = ({ isOpen, onClose, onCreate, categories = [], isEdi
   const [nameCategory, setNameCategory] = useState('');
   const [slugCategory, setSlugCategory] = useState('');
   const [parentId, setParentId] = useState('');
+  const [selectedChildCategory, setSelectedChildCategory] = useState('');
 
   useEffect(() => {
     if (isEditMode && editingCategory) {
@@ -30,22 +31,30 @@ const CreateCategoryModal = ({ isOpen, onClose, onCreate, categories = [], isEdi
       return;
     }
 
-    const parentIdValue = parentId ? parseInt(parentId, 10) : null;
+    const parentIdValue = selectedChildCategory
+      ? parseInt(selectedChildCategory, 10)
+      : parentId
+        ? parseInt(parentId, 10)
+        : null;
 
     const categoryData = {
       name_category: nameCategory.trim(),
       slug_category: slugCategory.trim(),
       parent_id: parentIdValue
     };
-    
+
     onCreate(categoryData);
 
     setNameCategory('');
     setSlugCategory('');
     setParentId('');
+    setSelectedChildCategory('');
   };
 
   const parentCategories = categories.filter(cat => !cat.parent_id || cat.parent_id === '' || cat.parent_id === null);
+  const childCategories = parentId
+    ? categories.filter(cat => Number(cat.parent_id) === Number(parentId))
+    : [];
 
   return (
     <div className="category-modal-overlay">
@@ -54,7 +63,7 @@ const CreateCategoryModal = ({ isOpen, onClose, onCreate, categories = [], isEdi
           <h3>{isEditMode ? 'Редактировать категорию' : 'Создать категорию'}</h3>
           <button className="category-modal-close" onClick={onClose}>×</button>
         </div>
-        
+
         <div className="category-modal-body">
           <div className="form-group">
             <label>Название категории</label>
@@ -82,7 +91,11 @@ const CreateCategoryModal = ({ isOpen, onClose, onCreate, categories = [], isEdi
             <label>Родительская категория</label>
             <select
               value={parentId}
-              onChange={(e) => setParentId(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value ? parseInt(e.target.value, 10) : '';
+                setParentId(value);
+                setSelectedChildCategory('');
+              }}
               className="form-input"
             >
               <option value="">-- Нет родительской категории --</option>
@@ -93,6 +106,25 @@ const CreateCategoryModal = ({ isOpen, onClose, onCreate, categories = [], isEdi
               ))}
             </select>
           </div>
+
+          {parentId && childCategories.length > 0 && (
+            <div className="form-group">  
+              <label>Подкатегории</label>
+              <select
+                value={selectedChildCategory}
+                onChange={(e) => setSelectedChildCategory(e.target.value)}
+                className="form-input"
+              >
+                <option value="">-- Выберите подкатегорию --</option>
+                {childCategories.map((cat) => (
+                  <option key={cat.id_category} value={cat.id_category}>
+                    {cat.name_category}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
         </div>
 
         <div className="category-modal-actions">

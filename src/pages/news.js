@@ -55,6 +55,7 @@ const News = () => {
                 } else {
                     all_news = [];
                 }
+                console.log('Полученные новости:', all_news);
                 setNewsList(all_news);
             } else {
                 alert('Ошибка при получении новостей');

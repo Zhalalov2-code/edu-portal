@@ -188,7 +188,7 @@ const DetailsNews = () => {
                     </div>
 
                     <div className='details-news__body'>
-                        <p><b>Категория:</b> {news?.parent_name || 'Без категории'}, {news?.child_name || 'Без подкатегории'}</p>
+                        <p><b>Категория:</b> {[news?.grandparent_name, news?.parent_name, news?.child_name].filter(Boolean).join(', ') || 'Без описания'}</p>
                         <p><b>Описание:</b> {news?.text || 'Описание отсутствует.'}</p>
                     </div>
                 </div>

@@ -9,8 +9,7 @@ const CreatedNewsCard = ({ isOpen, onClose, onSave }) => {
     const [file, setFile] = useState(null);
     const { user } = useAuth();
     const [categories, setCategories] = useState([]);
-    const [selectedParentCategory, setSelectedParentCategory] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedPath, setSelectedPath] = useState([]);
 
     const getCategories = async () => {
         try {
@@ -39,16 +38,33 @@ const CreatedNewsCard = ({ isOpen, onClose, onSave }) => {
         getCategories();
     }, []);
 
-    const parentCategories = categories.filter(cat => !cat.parent_id || cat.parent_id === '' || cat.parent_id === null);
+    const rootCategories = categories.filter(
+        (cat) => cat.parent_id === '' || cat.parent_id === null || typeof cat.parent_id === 'undefined'
+    );
 
-    const childCategories = selectedParentCategory 
-        ? categories.filter(cat => cat.parent_id === parseInt(selectedParentCategory))
-        : [];
+    const getChildCategories = (parentCategoryId) =>
+        categories.filter((cat) => Number(cat.parent_id) === Number(parentCategoryId));
 
-    const handleParentCategoryChange = (e) => {
-        setSelectedParentCategory(e.target.value);
-        setSelectedCategory('');
+    const categoryLevels = [rootCategories];
+
+    selectedPath.forEach((selectedId) => {
+        const children = getChildCategories(selectedId);
+        if (children.length > 0) {
+            categoryLevels.push(children);
+        }
+    });
+
+    const handleCategoryLevelChange = (levelIndex, value) => {
+        if (!value) {
+            setSelectedPath((prev) => prev.slice(0, levelIndex));
+            return;
+        }
+
+        const selectedId = Number(value);
+        setSelectedPath((prev) => [...prev.slice(0, levelIndex), selectedId]);
     };
+
+    const selectedCategoryId = selectedPath.length > 0 ? selectedPath[selectedPath.length - 1] : '';
 
     if (!isOpen) return null;
 
@@ -58,11 +74,12 @@ const CreatedNewsCard = ({ isOpen, onClose, onSave }) => {
             files: file,
             id_user: user ? user.id : null,
             name_user: user ? user.name : 'Пользователь',
-            id_category: selectedCategory
+            id_category: selectedCategoryId
         };
         onSave(formData);
         setText('');
         setFile(null);
+        setSelectedPath([]);
     }
 
 
@@ -74,30 +91,27 @@ const CreatedNewsCard = ({ isOpen, onClose, onSave }) => {
                 </div>
                 <div className="modal-content-news">
                     <label className='label-news'><b>Добавить контент</b></label>
-                    <div>
-                        <label className='label-news'>Выберите родительскую категорию: </label>
-                        <select className='select-category' value={selectedParentCategory} onChange={handleParentCategoryChange}>
-                            <option value=''>-- Выберите категорию --</option>
-                            {parentCategories.map((category) => (
-                                <option key={category.id_category} value={category.id_category}>
-                                    {category.name_category}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    {selectedParentCategory && childCategories.length > 0 && (
-                        <div>
-                            <label className='label-news'>Выберите подкатегорию: </label>
-                            <select className='select-category' value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-                                <option value=''>-- Выберите подкатегорию --</option>
-                                {childCategories.map((category) => (
-                                    <option key={category.id_category} value={category.id_category}>
-                                        {category.name_category}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
+                    {categoryLevels.map((levelOptions, levelIndex) => (
+                        levelOptions.length > 0 && (
+                            <div key={levelIndex}>
+                                <label className='label-news'>
+                                    {levelIndex === 0 ? 'Выберите категорию: ' : `Выберите подкатегорию (уровень ${levelIndex + 1}): `}
+                                </label>
+                                <select
+                                    className='select-category'
+                                    value={selectedPath[levelIndex] ?? ''}
+                                    onChange={(e) => handleCategoryLevelChange(levelIndex, e.target.value)}
+                                >
+                                    <option value=''>-- Выберите категорию --</option>
+                                    {levelOptions.map((category) => (
+                                        <option key={category.id_category} value={category.id_category}>
+                                            {category.name_category}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )
+                    ))}
                     <div>
                         <label className='label-news'>Прикрепить файл: </label>
                         <div className='btn-file'>
