@@ -1,1 +1,1 @@
-export const API_URL_BASE = 'http://localhost/school';
+export const API_URL_BASE = 'https://zhalalos2.su/school';
